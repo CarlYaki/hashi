@@ -1,0 +1,46 @@
+﻿<Window x:Class="hashi.Window_Hashi"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Window_Hashi"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        WindowStartupLocation="CenterScreen"
+        Width="1080"
+        Height="720"
+        ResizeMode="NoResize">
+    <Grid Name="gd_surface">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="9*" />
+            <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
+        <Grid Name="gd_hashi" Grid.Row="0" Grid.Column="0">
+            <Grid.ColumnDefinitions>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+            </Grid.RowDefinitions>
+        </Grid>
+        <Grid Name="gd_operation" Grid.Row="1" Grid.Column="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+            <Image Source="Resources/return.png" MouseEnter="back_enter" MouseLeave="back_leave" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="1"/>
+            <Image Source="Resources/reset.png" MouseDown="reset_click" MouseEnter="reset_enter" MouseLeave="reset_leave" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="3"/>
+        </Grid>
+        <Grid Name="gd_home" Grid.Row="1" Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
+            <Image Source="Resources/home.png" MouseDown="home_down" MouseEnter="home_enter" MouseLeave="home_leave" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="1"/>
+        </Grid>
+    </Grid>
+</Window>
