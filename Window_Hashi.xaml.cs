@@ -91,7 +91,7 @@ namespace hashi
                 for (int i = 0; i < 3; ++i)
                 {
                     tempimg = new Image();
-                    tempimg.Name = "nsdchoose_" + i.ToString();
+                    tempimg.Name = "nsdchoose_" + i.ToString() + "_" + name_split[0].Replace("pre","") + "_" + name_split[1] + "_" + name_split[2];
                     tempimg.Margin = new Thickness(i == 2 ? 80 : 0, 0, i == 0 ? 80 : 0, 0);
                     tempimg.VerticalAlignment = VerticalAlignment.Center;
                     tempimg.HorizontalAlignment = HorizontalAlignment.Center;
@@ -112,7 +112,7 @@ namespace hashi
                 for (int i = 0; i < 2; ++i)
                 {
                     tempimg = new Image();
-                    tempimg.Name = "nsdchoose" + i.ToString();
+                    tempimg.Name = "nsdchoose_" + i.ToString() + "_" + name_split[0].Replace("pre", "") + "_" + name_split[1] + "_" + name_split[2];
                     tempimg.SetValue(Grid.RowProperty, 0);
                     tempimg.SetValue(Grid.ColumnProperty, 0);
                     tempimg.Margin = new Thickness(i == 1 ? 40 : 0, 0, i == 0 ? 40 : 0, 0);
@@ -137,13 +137,17 @@ namespace hashi
         {
             Image nsdchoose = sender as Image;
             string[] name_split = nsdchoose.Name.Split('_');
-            switch(name_split[1])
+            int nsd = Convert.ToInt32(name_split[1]);
+            string HorV = name_split[2];
+            int id_1 = Convert.ToInt32(name_split[3]), id_2 = Convert.ToInt32(name_split[4]);
+            switch(nsd)
             {
-                case "0":
+                case 0:
+
                     break;
-                case "1":
+                case 1:
                     break;
-                case "2":
+                case 2:
                     break;
                 default:
                     return;
