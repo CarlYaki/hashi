@@ -61,6 +61,8 @@ namespace hashi
                 rows = r;
                 columns = c;
             }
+            pre_name_list = new List<string>();
+            pre_same = false;
             make_gd_hashi();
         }
 
@@ -69,13 +71,9 @@ namespace hashi
             Image pre = sender as Image;
             string pre_name = pre.Name;
             string[] name_split = pre_name.Split('_');
-            /*for (int i = 0; i < name_split.Length; ++i)
-            {
-                MessageBox.Show(name_split[i] + "\n");
-            }*/
             int id_1 = Convert.ToInt32(name_split[1]), id_2 = Convert.ToInt32(name_split[2]);
             Image tempimg = new Image();
-            tempimg.Name = "shader";
+            tempimg.Name = "shader" + "_" + name_split[0].Replace("pre", "") + "_" + name_split[1] + "_" + name_split[2];
             tempimg.VerticalAlignment = VerticalAlignment.Center;
             tempimg.HorizontalAlignment = HorizontalAlignment.Center;
             tempimg.Source = new BitmapImage(new Uri("Resources/shader.png", UriKind.Relative));
@@ -84,6 +82,7 @@ namespace hashi
             tempimg.Width = 720;
             tempimg.Height = 648;
             tempimg.Opacity = 0.75;
+            tempimg.MouseDown += nsdchoose_down;
             gd_hashi.RegisterName(tempimg.Name, tempimg);
             gd_hashi.Children.Add(tempimg);
             if (points[id_1].cnt > 1 && points[id_2].cnt > 1)
@@ -135,23 +134,154 @@ namespace hashi
 
         private void nsdchoose_down(object sender, MouseButtonEventArgs e)
         {
+            choosing_nsd = false;
             Image nsdchoose = sender as Image;
+            //MessageBox.Show(nsdchoose.Name);
+            Image tempimg;
             string[] name_split = nsdchoose.Name.Split('_');
+            if (name_split[0] == "shader")
+            {
+                for (int i = 0; i < 3; ++i)
+                {
+                    tempimg = FindName("nsdchoose_" + i.ToString() + nsdchoose.Name.Replace("shader", "")) as Image;
+                    if (tempimg != null)
+                    {
+                        //MessageBox.Show(tempimg.Name);
+                        gd_hashi.UnregisterName(tempimg.Name);
+                        gd_hashi.Children.Remove(tempimg);
+                    }
+                }
+                gd_hashi.UnregisterName(nsdchoose.Name);
+                gd_hashi.Children.Remove(nsdchoose);
+                choosing_nsd = false;
+                return;
+            }
             int nsd = Convert.ToInt32(name_split[1]);
             string HorV = name_split[2];
             int id_1 = Convert.ToInt32(name_split[3]), id_2 = Convert.ToInt32(name_split[4]);
-            switch(nsd)
+            for (int i = 0; i < 3; ++i)
             {
-                case 0:
-
-                    break;
-                case 1:
-                    break;
-                case 2:
-                    break;
-                default:
-                    return;
+                tempimg = FindName("nsdchoose_" + i.ToString() + "_" + HorV + "_" + id_1.ToString() + "_" + id_2.ToString()) as Image;
+                if (tempimg != null)
+                {
+                    //MessageBox.Show(tempimg.Name);
+                    gd_hashi.UnregisterName(tempimg.Name);
+                    gd_hashi.Children.Remove(tempimg);
+                }
             }
+            tempimg = FindName("shader_" + HorV + "_" + id_1.ToString() + "_" + id_2.ToString()) as Image;
+            gd_hashi.UnregisterName(tempimg.Name);
+            gd_hashi.Children.Remove(tempimg);
+            if (HorV == "horizontal")
+            {
+                for (int j = points[id_1].y + 1; j < points[id_2].y; ++j)
+                {
+                    tempimg = FindName(HorV + "_" + id_1.ToString() + "_" + id_2.ToString() + "_" + points[id_1].x.ToString() + "_" + j.ToString()) as Image;
+                    if (tempimg != null)
+                    {
+                        gd_hashi.UnregisterName(tempimg.Name);
+                        gd_hashi.Children.Remove(tempimg);
+                    }
+                }
+            }
+            else
+            {
+                for (int i = points[id_1].x + 1; i < points[id_2].y; ++i)
+                {
+                    tempimg = FindName(HorV + "_" + id_1.ToString() + "_" + id_2.ToString() + "_" + i.ToString() + "_" + points[id_1].y.ToString()) as Image;
+                    if (tempimg != null)
+                    {
+                        gd_hashi.UnregisterName(tempimg.Name);
+                        gd_hashi.Children.Remove(tempimg);
+                    }
+                }
+            }
+            if (nsd == 0)
+            {
+                if (HorV == "horizontal")
+                {
+                    points[id_1].right_cnt = nsd;
+                    points[id_2].left_cnt = nsd;
+                    for (int j = points[id_1].y + 1; j < points[id_2].y; ++j)
+                    {
+                        map[points[id_1].x, j] = nothing;
+                    }
+                }
+                else
+                {
+                    points[id_1].down_cnt = nsd;
+                    points[id_2].up_cnt = nsd;
+                    for (int i = points[id_1].x + 1; i < points[id_2].x; ++i)
+                    {
+                        map[i, points[id_1].y] = nothing;
+                    }
+                }
+                /*
+                 
+                 
+                 renew map
+                 
+                 
+                 */
+                return;
+            }
+            else
+            {
+                if (HorV == "horizontal")
+                {
+                    for (int j = points[id_1].y + 1; j < points[id_2].y; ++j)
+                    {
+                        tempimg = new Image();
+                        tempimg.Name = HorV + "_" + id_1.ToString() + "_" + id_2.ToString() + "_" + points[id_1].x.ToString() + "_" + j.ToString();
+                        tempimg.VerticalAlignment = VerticalAlignment.Center;
+                        tempimg.HorizontalAlignment = HorizontalAlignment.Center;
+                        tempimg.Source = new BitmapImage(new Uri("Resources/" + HorV + nsd.ToString() + ".png", UriKind.Relative));
+                        tempimg.SetValue(Grid.RowProperty, points[id_1].x);
+                        tempimg.SetValue(Grid.ColumnProperty, j);
+                        gd_hashi.RegisterName(tempimg.Name, tempimg);
+                        gd_hashi.Children.Add(tempimg);
+                        map[points[id_1].x, j] = nothing;
+                    }
+                    points[id_1].right_cnt = nsd;
+                    points[id_2].left_cnt = nsd;
+                }
+                else
+                {
+                    for (int i = points[id_1].x + 1; i < points[id_2].x; ++i)
+                    {
+                        tempimg = new Image();
+                        tempimg.Name = HorV + "_" + id_1.ToString() + "_" + id_2.ToString() + "_" + i.ToString() + "_" + points[id_1].y.ToString();
+                        tempimg.VerticalAlignment = VerticalAlignment.Center;
+                        tempimg.HorizontalAlignment = HorizontalAlignment.Center;
+                        tempimg.Source = new BitmapImage(new Uri("Resources/" + HorV + nsd.ToString() + ".png", UriKind.Relative));
+                        tempimg.SetValue(Grid.RowProperty, i);
+                        tempimg.SetValue(Grid.ColumnProperty, points[id_1].y);
+                        gd_hashi.RegisterName(tempimg.Name, tempimg);
+                        gd_hashi.Children.Add(tempimg);
+                        map[i, points[id_1].y] = nothing;
+                    }
+                    points[id_1].down_cnt = nsd;
+                    points[id_2].up_cnt = nsd;
+                }
+                for (int i = 0; i < pre_name_list.Count; ++i)
+                {
+                    tempimg = FindName(pre_name_list[i]) as Image;
+                    gd_hashi.UnregisterName(tempimg.Name);
+                    gd_hashi.Children.Remove(tempimg);
+                }
+                pre_name_list.Clear();
+                pre_same = true;
+            }
+            /* renew map
+             * 
+             * 
+             * 
+             */
+        }
+
+        private void renewmap()
+        {
+ 
         }
 
         private int pre_num_id = 999;
@@ -164,25 +294,14 @@ namespace hashi
             string name = num.Name;
             int id = Convert.ToInt32(name.Replace("num",""));
             //MessageBox.Show(name + "\n" + id);
-            Image temp_img;
-            for (int i = 0; i <= rows; ++i)
+            Image tempimg;
+            for (int i = 0; i < pre_name_list.Count; ++i)
             {
-                for (int j = 0; j <= columns; ++j)
-                {
-                    temp_img = FindName("horizontalpre_" + i.ToString() + "_" + j.ToString()) as Image;
-                    if(temp_img != null)
-                    {
-                        gd_hashi.UnregisterName(temp_img.Name);
-                        gd_hashi.Children.Remove(temp_img);
-                    }
-                    temp_img = FindName("verticalpre_" + i.ToString() + "_" + j.ToString()) as Image;
-                    if(temp_img != null)
-                    {
-                        gd_hashi.UnregisterName(temp_img.Name);
-                        gd_hashi.Children.Remove(temp_img);
-                    }
-                }
+                tempimg = FindName(pre_name_list[i]) as Image;
+                gd_hashi.UnregisterName(tempimg.Name);
+                gd_hashi.Children.Remove(tempimg);
             }
+            pre_name_list.Clear();
             if (id == pre_num_id && !pre_same)
             {
                 pre_same = true;
@@ -219,21 +338,23 @@ namespace hashi
                 }
             }
         }
+        List<string> pre_name_list;
         private void createpre(string mode, int x, int y, int id_1, int id_2)
         {
-            Image temp_img;
-            temp_img = new Image();
-            temp_img.Name = mode + "pre_" + id_1.ToString() + "_" + id_2.ToString() + "_" + x.ToString() + "_" + y.ToString();
-            temp_img.SetValue(Grid.RowProperty, x);
-            temp_img.SetValue(Grid.ColumnProperty, y);
+            Image tempimg;
+            tempimg = new Image();
+            tempimg.Name = mode + "pre_" + id_1.ToString() + "_" + id_2.ToString() + "_" + x.ToString() + "_" + y.ToString();
+            pre_name_list.Add(tempimg.Name);
+            tempimg.SetValue(Grid.RowProperty, x);
+            tempimg.SetValue(Grid.ColumnProperty, y);
             Uri uri = new Uri("Resources/" + mode + "pre.png", UriKind.Relative);
-            temp_img.Source = new BitmapImage(uri);
-            temp_img.VerticalAlignment = VerticalAlignment.Center;
-            temp_img.HorizontalAlignment = HorizontalAlignment.Center;
-            temp_img.Opacity = 0.75;
-            temp_img.MouseDown += pre_down;
-            gd_hashi.Children.Add(temp_img);
-            gd_hashi.RegisterName(temp_img.Name, temp_img);
+            tempimg.Source = new BitmapImage(uri);
+            tempimg.VerticalAlignment = VerticalAlignment.Center;
+            tempimg.HorizontalAlignment = HorizontalAlignment.Center;
+            tempimg.Opacity = 0.75;
+            tempimg.MouseDown += pre_down;
+            gd_hashi.Children.Add(tempimg);
+            gd_hashi.RegisterName(tempimg.Name, tempimg);
         }
 
 
@@ -405,13 +526,13 @@ namespace hashi
         {
             choosing_nsd = false;
             UIElementCollection Childrens = gd_hashi.Children;
-            Image temp_img;
+            Image tempimg;
             int upper = Childrens.Count;
             for (int i = upper - 1; i >= 0; --i)
             {
-                temp_img = Childrens[i] as Image;
-                gd_hashi.UnregisterName(temp_img.Name);
-                gd_hashi.Children.Remove(temp_img);
+                tempimg = Childrens[i] as Image;
+                gd_hashi.UnregisterName(tempimg.Name);
+                gd_hashi.Children.Remove(tempimg);
             }
             if (mode == "Self Defining")
             {
