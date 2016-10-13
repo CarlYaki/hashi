@@ -213,18 +213,84 @@ namespace hashi
                 {
                     points[id_1].right_cnt = nsd;
                     points[id_2].left_cnt = nsd;
+                    int id_up, id_down;
                     for (int j = points[id_1].y + 1; j < points[id_2].y; ++j)
                     {
+                        id_up = nothing;
+                        id_down = nothing;
                         map[points[id_1].x, j] = nothing;
+                        for (int i = points[id_1].x - 1; i >= 0; --i)
+                        {
+                            if (map[i, j] == nothing)
+                                continue;
+                            if (map[i, j] == horizongtalline)
+                                break;
+                            if (map[i, j] < points.Count)
+                            {
+                                id_up = map[i, j];
+                                break;
+                            }
+                        }
+                        if(id_up == nothing)
+                            continue;
+                        for (int i = points[id_1].x + 1; i < rows; ++i)
+                        {
+                            if (map[i, j] == nothing)
+                                continue;
+                            if (map[i, j] == horizongtalline)
+                                break;
+                            if (map[i, j] < points.Count)
+                            {
+                                id_down = map[i, j];
+                                break;
+                            }
+                        }
+                        if (id_down == nothing)
+                            continue;
+                        points[id_up].down_flag = true;
+                        points[id_down].up_flag = true;
                     }
                 }
                 else
                 {
                     points[id_1].down_cnt = nsd;
                     points[id_2].up_cnt = nsd;
+                    int id_left, id_right;
                     for (int i = points[id_1].x + 1; i < points[id_2].x; ++i)
                     {
+                        id_left = nothing;
+                        id_right = nothing;
                         map[i, points[id_1].y] = nothing;
+                        for (int j = points[id_1].y - 1; j >= 0; --j)
+                        {
+                            if (map[i, j] == nothing)
+                                continue;
+                            if (map[i, j] == verticalline)
+                                break;
+                            if (map[i, j] < points.Count)
+                            {
+                                id_left = map[i, j];
+                                break;
+                            }
+                        }
+                        if (id_left == nothing)
+                            continue;
+                        for (int j = points[id_1].y + 1; j < columns; ++j)
+                        {
+                            if (map[i, j] == nothing)
+                                continue;
+                            if (map[i, j] == verticalline)
+                                break;
+                            if (map[i, j] < points.Count)
+                            {
+                                id_right = map[i, j];
+                                break;
+                            }
+                        }
+                        if (id_right == nothing)
+                            continue;
+                        points[id_left].right_flag = true;
+                        points[id_right].left_flag = true;
                     }
                 }
             }
@@ -232,6 +298,7 @@ namespace hashi
             {
                 if (HorV == "horizontal")
                 {
+                    int id_up, id_down;
                     for (int j = points[id_1].y + 1; j < points[id_2].y; ++j)
                     {
                         tempimg = new Image();
@@ -243,13 +310,49 @@ namespace hashi
                         tempimg.SetValue(Grid.ColumnProperty, j);
                         gd_hashi.RegisterName(tempimg.Name, tempimg);
                         gd_hashi.Children.Add(tempimg);
+                        map[points[id_1].x, j] = horizongtalline;
+
+
+                        id_up = nothing;
+                        id_down = nothing;
                         map[points[id_1].x, j] = nothing;
+                        for (int i = points[id_1].x - 1; i >= 0; --i)
+                        {
+                            if (map[i, j] == nothing)
+                                continue;
+                            if (map[i, j] == horizongtalline)
+                                break;
+                            if (map[i, j] < points.Count)
+                            {
+                                id_up = map[i, j];
+                                break;
+                            }
+                        }
+                        if (id_up == nothing)
+                            continue;
+                        for (int i = points[id_1].x + 1; i < rows; ++i)
+                        {
+                            if (map[i, j] == nothing)
+                                continue;
+                            if (map[i, j] == horizongtalline)
+                                break;
+                            if (map[i, j] < points.Count)
+                            {
+                                id_down = map[i, j];
+                                break;
+                            }
+                        }
+                        if (id_down == nothing)
+                            continue;
+                        points[id_up].down_flag = false;
+                        points[id_down].up_flag = false;
                     }
                     points[id_1].right_cnt = nsd;
                     points[id_2].left_cnt = nsd;
                 }
                 else
                 {
+                    int id_left, id_right;
                     for (int i = points[id_1].x + 1; i < points[id_2].x; ++i)
                     {
                         tempimg = new Image();
@@ -261,7 +364,41 @@ namespace hashi
                         tempimg.SetValue(Grid.ColumnProperty, points[id_1].y);
                         gd_hashi.RegisterName(tempimg.Name, tempimg);
                         gd_hashi.Children.Add(tempimg);
+                        map[i, points[id_1].y] = verticalline;
+
+                        id_left = nothing;
+                        id_right = nothing;
                         map[i, points[id_1].y] = nothing;
+                        for (int j = points[id_1].y - 1; j >= 0; --j)
+                        {
+                            if (map[i, j] == nothing)
+                                continue;
+                            if (map[i, j] == verticalline)
+                                break;
+                            if (map[i, j] < points.Count)
+                            {
+                                id_left = map[i, j];
+                                break;
+                            }
+                        }
+                        if (id_left == nothing)
+                            continue;
+                        for (int j = points[id_1].y + 1; j < columns; ++j)
+                        {
+                            if (map[i, j] == nothing)
+                                continue;
+                            if (map[i, j] == verticalline)
+                                break;
+                            if (map[i, j] < points.Count)
+                            {
+                                id_right = map[i, j];
+                                break;
+                            }
+                        }
+                        if (id_right == nothing)
+                            continue;
+                        points[id_left].right_flag = false;
+                        points[id_right].left_flag = false;
                     }
                     points[id_1].down_cnt = nsd;
                     points[id_2].up_cnt = nsd;
@@ -283,7 +420,16 @@ namespace hashi
             Image tempimg;
             for (int i = 0; i < points.Count; ++i)
             {
-                points[i].available = points[i].num - points[i].up_cnt - points[i].down_cnt - points[i].left_cnt - points[i].right_cnt; 
+                points[i].available = points[i].num - points[i].up_cnt - points[i].down_cnt - points[i].left_cnt - points[i].right_cnt;
+                tempimg = FindName("num" + points[i].id.ToString()) as Image;
+                if (points[i].available == 0)
+                {
+                    tempimg.Opacity = 0.5;
+                }
+                else
+                {
+                    tempimg.Opacity = 1;
+                }
             }
         }
 
