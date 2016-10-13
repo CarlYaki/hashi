@@ -28,26 +28,36 @@ namespace hashi
         {
             
             public int x,y,id,num;
-            public int cnt,up_cnt, down_cnt, left_cnt, right_cnt;
+            public int available,up_cnt, down_cnt, left_cnt, right_cnt;
             public int directions;
             public bool up_flag, down_flag, left_flag, right_flag;
             public int up_id, down_id, left_id, right_id;
+            public Point()
+            { }
             public Point(int a, int b, int c, int d)
             {
                 x = a;
                 y = b;
-                cnt = num = c;
+                available = num = c;
                 up_cnt = down_cnt = left_cnt = right_cnt = 0;
                 id = d;
                 directions = 0;
                 up_flag = down_flag = left_flag = right_flag = false;
                 up_id = down_id = left_id = right_id = nothing;
             }
+            public Point(Point p)
+            {
+                x = p.x; y = p.y; id = p.id; num = p.num;
+                available = p.available; up_cnt = p.up_cnt; down_cnt = p.down_cnt; left_cnt = p.left_cnt; right_cnt = p.right_cnt;
+                directions = p.directions;
+                up_flag = p.up_flag; down_flag = p.down_flag; left_flag = p.left_flag; right_flag = p.right_flag;
+                up_id = p.up_id; down_id = p.down_id; left_id = p.left_id; right_id = p.right_id;
+            }
         };
         string mode;
         int level;
         private int rows, columns, pointCnt;
-        private List<Point> points;
+        private List<Point> points,_points;
         int[,] map;
         bool choosing_nsd = false;
         public Window_Hashi(string m, int l = 0, int r = 0, int c = 0)
@@ -71,7 +81,8 @@ namespace hashi
             Image pre = sender as Image;
             string pre_name = pre.Name;
             string[] name_split = pre_name.Split('_');
-            int id_1 = Convert.ToInt32(name_split[1]), id_2 = Convert.ToInt32(name_split[2]);
+            string mode = name_split[0].Replace("pre", "");
+            int id_1 = Convert.ToInt32(name_split[1]), id_2 = Convert.ToInt32(name_split[2]), upper = Convert.ToInt32(name_split[5]);
             Image tempimg = new Image();
             tempimg.Name = "shader" + "_" + name_split[0].Replace("pre", "") + "_" + name_split[1] + "_" + name_split[2];
             tempimg.VerticalAlignment = VerticalAlignment.Center;
@@ -85,12 +96,12 @@ namespace hashi
             tempimg.MouseDown += nsdchoose_down;
             gd_hashi.RegisterName(tempimg.Name, tempimg);
             gd_hashi.Children.Add(tempimg);
-            if (points[id_1].cnt > 1 && points[id_2].cnt > 1)
+            if (upper >= 2)
             {
                 for (int i = 0; i < 3; ++i)
                 {
                     tempimg = new Image();
-                    tempimg.Name = "nsdchoose_" + i.ToString() + "_" + name_split[0].Replace("pre","") + "_" + name_split[1] + "_" + name_split[2];
+                    tempimg.Name = "nsdchoose_" + i.ToString() + "_" + mode + "_" + name_split[1] + "_" + name_split[2];
                     tempimg.Margin = new Thickness(i == 2 ? 80 : 0, 0, i == 0 ? 80 : 0, 0);
                     tempimg.VerticalAlignment = VerticalAlignment.Center;
                     tempimg.HorizontalAlignment = HorizontalAlignment.Center;
@@ -106,12 +117,12 @@ namespace hashi
                     gd_hashi.Children.Add(tempimg);
                 }
             }
-            else
+            else if (upper == 1)
             {
                 for (int i = 0; i < 2; ++i)
                 {
                     tempimg = new Image();
-                    tempimg.Name = "nsdchoose_" + i.ToString() + "_" + name_split[0].Replace("pre", "") + "_" + name_split[1] + "_" + name_split[2];
+                    tempimg.Name = "nsdchoose_" + i.ToString() + "_" + mode + "_" + name_split[1] + "_" + name_split[2];
                     tempimg.SetValue(Grid.RowProperty, 0);
                     tempimg.SetValue(Grid.ColumnProperty, 0);
                     tempimg.Margin = new Thickness(i == 1 ? 40 : 0, 0, i == 0 ? 40 : 0, 0);
@@ -216,14 +227,6 @@ namespace hashi
                         map[i, points[id_1].y] = nothing;
                     }
                 }
-                /*
-                 
-                 
-                 renew map
-                 
-                 
-                 */
-                return;
             }
             else
             {
@@ -263,25 +266,34 @@ namespace hashi
                     points[id_1].down_cnt = nsd;
                     points[id_2].up_cnt = nsd;
                 }
-                for (int i = 0; i < pre_name_list.Count; ++i)
-                {
-                    tempimg = FindName(pre_name_list[i]) as Image;
-                    gd_hashi.UnregisterName(tempimg.Name);
-                    gd_hashi.Children.Remove(tempimg);
-                }
-                pre_name_list.Clear();
-                pre_same = true;
             }
-            /* renew map
-             * 
-             * 
-             * 
-             */
+            for (int i = 0; i < pre_name_list.Count; ++i)
+            {
+                tempimg = FindName(pre_name_list[i]) as Image;
+                gd_hashi.UnregisterName(tempimg.Name);
+                gd_hashi.Children.Remove(tempimg);
+            }
+            pre_name_list.Clear();
+            pre_same = true;
+            renewmap();
         }
 
         private void renewmap()
         {
- 
+            Image tempimg;
+            for (int i = 0; i < points.Count; ++i)
+            {
+                points[i].available = points[i].num - points[i].up_cnt - points[i].down_cnt - points[i].left_cnt - points[i].right_cnt; 
+            }
+        }
+
+        private int max(int a, int b)
+        {
+            return (a > b ? a : b);
+        }
+        private int min(int a, int b)
+        {
+            return (a < b ? a : b);
         }
 
         private int pre_num_id = 999;
@@ -309,41 +321,127 @@ namespace hashi
             }
             pre_same = false;
             pre_num_id = id;
-            if (points[id].up_flag)
+            if (points[id].available == 0)
             {
-                for (int i = points[id].x - 1; i > points[points[id].up_id].x; --i)
+                if (points[id].up_cnt > 0)
                 {
-                    createpre("vertical", i, points[id].y, points[id].up_id, id);
+                    for (int i = points[id].x - 1; i > points[points[id].up_id].x; --i)
+                    {
+                        createpre("vertical", i, points[id].y, points[id].up_id, id, points[id].up_cnt);
+                    }
+                }
+                if (points[id].down_cnt > 0)
+                {
+                    for (int i = points[id].x + 1; i < points[points[id].down_id].x; ++i)
+                    {
+                        createpre("vertical", i, points[id].y, id, points[id].down_id, points[id].down_cnt);
+                    }
+                }
+                if (points[id].left_cnt > 0)
+                {
+                    for (int j = points[id].y - 1; j > points[points[id].left_id].y; --j)
+                    {
+                        createpre("horizontal", points[id].x, j, points[id].left_id, id, points[id].left_cnt);
+                    }
+                }
+                if (points[id].right_cnt > 0)
+                {
+                    for (int j = points[id].y + 1; j < points[points[id].right_id].y; ++j)
+                    {
+                        createpre("horizontal", points[id].x, j, id, points[id].right_id, points[id].right_cnt);
+                    }
                 }
             }
-            if (points[id].down_flag)
+            else
             {
-                for (int i = points[id].x + 1; i < points[points[id].down_id].x; ++i)
+                if (points[id].up_flag)
                 {
-                    createpre("vertical", i, points[id].y, id, points[id].down_id);
+                    if (points[points[id].up_id].available == 0)
+                    {
+                        if (points[id].up_cnt > 0)
+                        {
+                            for (int i = points[id].x - 1; i > points[points[id].up_id].x; --i)
+                            {
+                                createpre("vertical", i, points[id].y, points[id].up_id, id, points[points[id].up_id].down_cnt);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        for (int i = points[id].x - 1; i > points[points[id].up_id].x; --i)
+                        {
+                            createpre("vertical", i, points[id].y, points[id].up_id, id, min(points[id].available + points[id].up_cnt, points[points[id].up_id].available + points[points[id].up_id].down_cnt));
+                        }
+                    }
                 }
-            }
-            if (points[id].left_flag)
-            {
-                for (int j = points[id].y - 1; j > points[points[id].left_id].y; --j)
+                if (points[id].down_flag)
                 {
-                    createpre("horizontal", points[id].x, j, points[id].left_id, id);
+                    if (points[points[id].down_id].available == 0)
+                    {
+                        if (points[id].down_cnt > 0)
+                        {
+                            for (int i = points[id].x + 1; i < points[points[id].down_id].x; ++i)
+                            {
+                                createpre("vertical", i, points[id].y, id, points[id].down_id, points[points[id].down_id].up_cnt);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        for (int i = points[id].x + 1; i < points[points[id].down_id].x; ++i)
+                        {
+                            createpre("vertical", i, points[id].y, id, points[id].down_id, min(points[id].available + points[id].down_cnt, points[points[id].down_id].available + points[points[id].down_id].up_cnt));
+                        }
+                    }
                 }
-            }
-            if (points[id].right_flag)
-            {
-                for (int j = points[id].y + 1; j < points[points[id].right_id].y; ++j)
+                if (points[id].left_flag)
                 {
-                    createpre("horizontal", points[id].x, j, id, points[id].right_id);
+                    if (points[points[id].left_id].available == 0)
+                    {
+                        if (points[id].left_cnt > 0)
+                        {
+                            for (int j = points[id].y - 1; j > points[points[id].left_id].y; --j)
+                            {
+                                createpre("horizontal", points[id].x, j, points[id].left_id, id, points[points[id].left_id].right_cnt);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        for (int j = points[id].y - 1; j > points[points[id].left_id].y; --j)
+                        {
+                            createpre("horizontal", points[id].x, j, points[id].left_id, id, min(points[id].available + points[id].left_cnt, points[points[id].left_id].available + points[points[id].left_id].right_cnt));
+                        }
+                    }
+                }
+                if (points[id].right_flag)
+                {
+                    if (points[points[id].right_id].available == 0)
+                    {
+                        if (points[id].right_cnt > 0)
+                        {
+                            for (int j = points[id].y + 1; j < points[points[id].right_id].y; ++j)
+                            {
+                                createpre("horizontal", points[id].x, j, id, points[id].right_id, points[points[id].right_id].left_cnt);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        for (int j = points[id].y + 1; j < points[points[id].right_id].y; ++j)
+                        {
+                            createpre("horizontal", points[id].x, j, id, points[id].right_id, min(points[id].available + points[id].right_cnt, points[points[id].right_id].available + points[points[id].right_id].left_cnt));
+                        }
+                    }
                 }
             }
         }
         List<string> pre_name_list;
-        private void createpre(string mode, int x, int y, int id_1, int id_2)
+        private void createpre(string mode, int x, int y, int id_1, int id_2, int upper)
         {
             Image tempimg;
             tempimg = new Image();
-            tempimg.Name = mode + "pre_" + id_1.ToString() + "_" + id_2.ToString() + "_" + x.ToString() + "_" + y.ToString();
+            tempimg.Name = mode + "pre_" + id_1.ToString() + "_" + id_2.ToString() + "_" + x.ToString() + "_" + y.ToString() + "_" + upper.ToString();
             pre_name_list.Add(tempimg.Name);
             tempimg.SetValue(Grid.RowProperty, x);
             tempimg.SetValue(Grid.ColumnProperty, y);
@@ -403,6 +501,13 @@ namespace hashi
                 }
                 draw_points();
                 make_map();
+                Point tempp;
+                _points = new List<Point>();
+                for (int i = 0; i < points.Count; ++i)
+                {
+                    tempp = new Point(points[i]);
+                    _points.Add(tempp);
+                }
             }
             else if (mode == "Self Defining")
             {
@@ -476,7 +581,7 @@ namespace hashi
             for (int i = 0; i < points.Count; ++i)
             {
                 newnum = new Image();
-                newnum.Name = "num" + i.ToString();
+                newnum.Name = "num" + points[i].id.ToString();
                 newnum.SetValue(Grid.RowProperty, points[i].x);
                 newnum.SetValue(Grid.ColumnProperty, points[i].y);
                 Uri uri = new Uri("Resources/num/" + points[i].num.ToString() + ".png", UriKind.Relative);
@@ -524,6 +629,14 @@ namespace hashi
         }
         private void reset_click(object sender, MouseButtonEventArgs e)
         {
+            points.Clear();
+            Point tempp;
+            for (int i = 0; i < _points.Count; ++i)
+            {
+                tempp = new Point(_points[i]);
+                points.Add(tempp);
+            }
+            pre_name_list.Clear();
             choosing_nsd = false;
             UIElementCollection Childrens = gd_hashi.Children;
             Image tempimg;
