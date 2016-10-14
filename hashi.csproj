@@ -181,6 +181,20 @@
     <Resource Include="Resources\optiontitle\passstep.png" />
     <Resource Include="Resources\optiontitle\passtime.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\_num\3.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\_num\0.jpg" />
+    <Resource Include="Resources\_num\1.jpg" />
+    <Resource Include="Resources\_num\2.jpg" />
+    <Resource Include="Resources\_num\4.jpg" />
+    <Resource Include="Resources\_num\5.jpg" />
+    <Resource Include="Resources\_num\6.jpg" />
+    <Resource Include="Resources\_num\7.jpg" />
+    <Resource Include="Resources\_num\8.jpg" />
+    <Resource Include="Resources\_num\9.jpg" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

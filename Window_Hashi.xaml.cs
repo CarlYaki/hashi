@@ -20,41 +20,41 @@ namespace hashi
     /// <summary>
     /// Window_Hashi.xaml 的交互逻辑
     /// </summary>
+    class Point
+    {
+
+        public int x, y, id, num;
+        public int available, up_cnt, down_cnt, left_cnt, right_cnt;
+        public int directions;
+        public bool up_flag, down_flag, left_flag, right_flag;
+        public int up_id, down_id, left_id, right_id;
+        public Point()
+        { }
+        public Point(int a, int b, int c, int d)
+        {
+            x = a;
+            y = b;
+            available = num = c;
+            up_cnt = down_cnt = left_cnt = right_cnt = 0;
+            id = d;
+            directions = 0;
+            up_flag = down_flag = left_flag = right_flag = false;
+            up_id = down_id = left_id = right_id = 999;
+        }
+        public Point(Point p)
+        {
+            x = p.x; y = p.y; id = p.id; num = p.num;
+            available = p.available; up_cnt = p.up_cnt; down_cnt = p.down_cnt; left_cnt = p.left_cnt; right_cnt = p.right_cnt;
+            directions = p.directions;
+            up_flag = p.up_flag; down_flag = p.down_flag; left_flag = p.left_flag; right_flag = p.right_flag;
+            up_id = p.up_id; down_id = p.down_id; left_id = p.left_id; right_id = p.right_id;
+        }
+    };
     public partial class Window_Hashi : Window
     {
         const int nothing = 999;
         int[] verticalline = { 998, 997 };
         int[] horizontalline = { 996, 995 };
-        class Point
-        {
-            
-            public int x,y,id,num;
-            public int available,up_cnt, down_cnt, left_cnt, right_cnt;
-            public int directions;
-            public bool up_flag, down_flag, left_flag, right_flag;
-            public int up_id, down_id, left_id, right_id;
-            public Point()
-            { }
-            public Point(int a, int b, int c, int d)
-            {
-                x = a;
-                y = b;
-                available = num = c;
-                up_cnt = down_cnt = left_cnt = right_cnt = 0;
-                id = d;
-                directions = 0;
-                up_flag = down_flag = left_flag = right_flag = false;
-                up_id = down_id = left_id = right_id = nothing;
-            }
-            public Point(Point p)
-            {
-                x = p.x; y = p.y; id = p.id; num = p.num;
-                available = p.available; up_cnt = p.up_cnt; down_cnt = p.down_cnt; left_cnt = p.left_cnt; right_cnt = p.right_cnt;
-                directions = p.directions;
-                up_flag = p.up_flag; down_flag = p.down_flag; left_flag = p.left_flag; right_flag = p.right_flag;
-                up_id = p.up_id; down_id = p.down_id; left_id = p.left_id; right_id = p.right_id;
-            }
-        };
         string mode;
         int level;
         private int rows, columns, pointCnt;
@@ -90,9 +90,15 @@ namespace hashi
             timer.Start();
             if (mode == "Easy" || mode == "Medium" || mode == "Hard")
             {
+                path = new List<string>();
+                path.Clear();
                 modelevel.Text = mode + " Level." + l.ToString();
+                Tools.find_solution(map,rows,columns,points,path);
+                MessageBox.Show(path.Count.ToString());
             }
         }
+
+        List<string> path;
 
         private void one_sec(object sender, EventArgs e)
         {
@@ -1052,12 +1058,12 @@ namespace hashi
                     }
                 }
             }
-            passstep.Text = (Convert.ToInt32(passstep.Text)-1).ToString();
+            passstep.Text = (Convert.ToInt32(passstep.Text)+1).ToString();
         }
 
-        private void AIstart_Click(object sender, RoutedEventArgs e)
+        private void AIstart_Click(object sender, MouseButtonEventArgs e)
         {
-
+            reset_click(FindName("reset"), e);
         }
     }
 }

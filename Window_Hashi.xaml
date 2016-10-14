@@ -31,8 +31,8 @@
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="2*"/>
             </Grid.ColumnDefinitions>
-            <Image Source="Resources/return.png" MouseDown="retract_click" MouseEnter="image_enter" MouseLeave="image_leave" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="1"/>
-            <Image Source="Resources/reset.png" MouseDown="reset_click" MouseEnter="image_enter" MouseLeave="image_leave" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="3"/>
+            <Image Name="retract" Source="Resources/return.png" MouseDown="retract_click" MouseEnter="image_enter" MouseLeave="image_leave" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="1"/>
+            <Image Name="reset" Source="Resources/reset.png" MouseDown="reset_click" MouseEnter="image_enter" MouseLeave="image_leave" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="3"/>
         </Grid>
         <Grid Name="gd_home" Grid.Row="1" Grid.Column="1">
             <Grid.ColumnDefinitions>
@@ -59,7 +59,7 @@
             <TextBlock Text="0.5s" Grid.Row="2" VerticalAlignment="Center" Margin="108,48,0,10" FontSize="16"/>
             <TextBlock Text="2.0s" Grid.Row="2" VerticalAlignment="Center" Margin="299,48,0,10" FontSize="16"/>
             <Slider Grid.Row="2" Minimum="0.5" Maximum="2.0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0, 0, 40 20" Width="200" Orientation="Horizontal" TickPlacement="BottomRight" TickFrequency="0.1"/>
-            <Button Name="AIstart" Content="AI start" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,0" Grid.Row="3" Width="100" Height="30" FontSize="20" Click="AIstart_Click"/>
+            <Image Name="AIstart" Source="Resources/ok.png" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,0" Grid.Row="3" Width="40" MouseDown="AIstart_Click" MouseEnter="image_enter" MouseLeave="image_leave"/>
         </Grid>
     </Grid>
 </Window>
