@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace hashi
 {
@@ -22,8 +23,8 @@ namespace hashi
     public partial class Window_Hashi : Window
     {
         const int nothing = 999;
-        const int verticalline = 998;
-        const int horizongtalline = 997;
+        int[] verticalline = { 998, 997 };
+        int[] horizontalline = { 996, 995 };
         class Point
         {
             
@@ -59,10 +60,22 @@ namespace hashi
         private int rows, columns, pointCnt;
         private List<Point> points,_points;
         int[,] map;
+        List<int[,]> map_hist;
+        List<List<Point>> points_hist;
         bool choosing_nsd = false;
+        DispatcherTimer timer;
         public Window_Hashi(string m, int l = 0, int r = 0, int c = 0)
         {
             InitializeComponent();
+            passstep.Text = "0";
+            passtime.Text = "0";
+
+            timer = new DispatcherTimer();
+            timer.Interval = new TimeSpan(0, 0, 1);
+            timer.Tick += one_sec;
+
+            points_hist = new List<List<Point>>();
+            points_hist.Clear();
             mode = m;
             level = l;
             Tools.showSlowly(this, gd_surface);
@@ -74,6 +87,12 @@ namespace hashi
             pre_name_list = new List<string>();
             pre_same = false;
             make_gd_hashi();
+            timer.Start();
+        }
+
+        private void one_sec(object sender, EventArgs e)
+        {
+            passtime.Text = (Convert.ToInt32(passtime.Text) + 1).ToString();
         }
 
         private void pre_down(object sender, MouseButtonEventArgs e)
@@ -223,7 +242,7 @@ namespace hashi
                         {
                             if (map[i, j] == nothing)
                                 continue;
-                            if (map[i, j] == horizongtalline)
+                            if (map[i, j] == horizontalline[0] || map[i,j] == horizontalline[1])
                                 break;
                             if (map[i, j] < points.Count)
                             {
@@ -237,7 +256,7 @@ namespace hashi
                         {
                             if (map[i, j] == nothing)
                                 continue;
-                            if (map[i, j] == horizongtalline)
+                            if (map[i, j] == horizontalline[0] || map[i, j] == horizontalline[1])
                                 break;
                             if (map[i, j] < points.Count)
                             {
@@ -265,7 +284,7 @@ namespace hashi
                         {
                             if (map[i, j] == nothing)
                                 continue;
-                            if (map[i, j] == verticalline)
+                            if (map[i, j] == verticalline[0] || map[i, j] == verticalline[1])
                                 break;
                             if (map[i, j] < points.Count)
                             {
@@ -279,7 +298,7 @@ namespace hashi
                         {
                             if (map[i, j] == nothing)
                                 continue;
-                            if (map[i, j] == verticalline)
+                            if (map[i, j] == verticalline[0] || map[i, j] == verticalline[1])
                                 break;
                             if (map[i, j] < points.Count)
                             {
@@ -310,17 +329,16 @@ namespace hashi
                         tempimg.SetValue(Grid.ColumnProperty, j);
                         gd_hashi.RegisterName(tempimg.Name, tempimg);
                         gd_hashi.Children.Add(tempimg);
-                        map[points[id_1].x, j] = horizongtalline;
+                        map[points[id_1].x, j] = horizontalline[nsd-1];
 
 
                         id_up = nothing;
                         id_down = nothing;
-                        map[points[id_1].x, j] = nothing;
                         for (int i = points[id_1].x - 1; i >= 0; --i)
                         {
                             if (map[i, j] == nothing)
                                 continue;
-                            if (map[i, j] == horizongtalline)
+                            if (map[i, j] == horizontalline[0] || map[i, j] == horizontalline[1])
                                 break;
                             if (map[i, j] < points.Count)
                             {
@@ -334,7 +352,7 @@ namespace hashi
                         {
                             if (map[i, j] == nothing)
                                 continue;
-                            if (map[i, j] == horizongtalline)
+                            if (map[i, j] == horizontalline[0] || map[i, j] == horizontalline[1])
                                 break;
                             if (map[i, j] < points.Count)
                             {
@@ -364,16 +382,15 @@ namespace hashi
                         tempimg.SetValue(Grid.ColumnProperty, points[id_1].y);
                         gd_hashi.RegisterName(tempimg.Name, tempimg);
                         gd_hashi.Children.Add(tempimg);
-                        map[i, points[id_1].y] = verticalline;
+                        map[i, points[id_1].y] = verticalline[nsd-1];
 
                         id_left = nothing;
                         id_right = nothing;
-                        map[i, points[id_1].y] = nothing;
                         for (int j = points[id_1].y - 1; j >= 0; --j)
                         {
                             if (map[i, j] == nothing)
                                 continue;
-                            if (map[i, j] == verticalline)
+                            if (map[i, j] == verticalline[0] || map[i, j] == verticalline[1])
                                 break;
                             if (map[i, j] < points.Count)
                             {
@@ -387,7 +404,7 @@ namespace hashi
                         {
                             if (map[i, j] == nothing)
                                 continue;
-                            if (map[i, j] == verticalline)
+                            if (map[i, j] == verticalline[0] || map[i, j] == verticalline[1])
                                 break;
                             if (map[i, j] < points.Count)
                             {
@@ -418,6 +435,7 @@ namespace hashi
         private void renewmap()
         {
             Image tempimg;
+            int remain = points.Count;
             for (int i = 0; i < points.Count; ++i)
             {
                 points[i].available = points[i].num - points[i].up_cnt - points[i].down_cnt - points[i].left_cnt - points[i].right_cnt;
@@ -425,12 +443,61 @@ namespace hashi
                 if (points[i].available == 0)
                 {
                     tempimg.Opacity = 0.5;
+                    remain--;
                 }
                 else
                 {
                     tempimg.Opacity = 1;
                 }
             }
+            if (remain == 0)
+            {
+                passstep.Text = (Convert.ToInt32(passstep.Text) + 1).ToString();
+                timer.Stop();
+                tempimg = new Image();
+                tempimg.Name = "win";
+                tempimg.Source = new BitmapImage(new Uri("Resources/win.png", UriKind.Relative));
+                tempimg.SetValue(Grid.RowProperty, 0);
+                tempimg.SetValue(Grid.ColumnProperty, 0);
+                tempimg.Opacity = 0.7;
+                gd_surface.RegisterName(tempimg.Name, tempimg);
+                gd_surface.Children.Add(tempimg);
+                return;
+            }
+            bool save = false;
+            int[,] temp_map = map_hist[map_hist.Count - 1];
+            for (int i = 0; i < rows; ++i)
+            {
+                for (int j = 0; j < columns; ++j)
+                {
+                    if (temp_map[i, j] != map[i, j])
+                    {
+                        save = true;
+                        break;
+                    }
+                }
+                if (save)
+                    break;
+            }
+            if (!save)
+                return;
+            passstep.Text = (Convert.ToInt32(passstep.Text) + 1).ToString();
+            temp_map = new int[rows, columns];
+            for (int i = 0; i < rows; ++i)
+            {
+                for (int j = 0; j < columns; ++j)
+                {
+                    temp_map[i, j] = map[i, j];
+                }
+            }
+            map_hist.Add(temp_map);
+            _points = new List<Point>();
+            _points.Clear();
+            for (int i = 0; i < points.Count; ++i)
+            {
+                _points.Add(points[i]);
+            }
+            points_hist.Add(_points);
         }
 
         private int max(int a, int b)
@@ -654,6 +721,7 @@ namespace hashi
                     tempp = new Point(points[i]);
                     _points.Add(tempp);
                 }
+                points_hist.Add(_points);
             }
             else if (mode == "Self Defining")
             {
@@ -673,10 +741,10 @@ namespace hashi
         }
         private void make_map()
         {
-            map = new int[20,20];
-            for (int i = 0; i < 20; ++i)
+            map = new int[rows,columns];
+            for (int i = 0; i < rows; ++i)
             {
-                for (int j = 0; j < 20; ++j)
+                for (int j = 0; j < columns; ++j)
                 {
                     map[i, j] = nothing;
                 }
@@ -720,6 +788,17 @@ namespace hashi
                     }
                 }
             }
+            map_hist = new List<int[,]>();
+            map_hist.Clear();
+            int[,] temp_map = new int[rows,columns];
+            for (int i = 0; i < rows; ++i)
+            {
+                for (int j = 0; j < columns; ++j)
+                {
+                    temp_map[i, j] = map[i, j];
+                }
+            }
+            map_hist.Add(temp_map);
         }
         private void draw_points()
         {
@@ -775,6 +854,10 @@ namespace hashi
         }
         private void reset_click(object sender, MouseButtonEventArgs e)
         {
+            timer.Stop();
+            passstep.Text = "0";
+            passtime.Text = "0";
+            timer.Start();
             points.Clear();
             Point tempp;
             for (int i = 0; i < _points.Count; ++i)
@@ -784,8 +867,15 @@ namespace hashi
             }
             pre_name_list.Clear();
             choosing_nsd = false;
+            make_map();
             UIElementCollection Childrens = gd_hashi.Children;
             Image tempimg;
+            tempimg = FindName("win") as Image;
+            if (tempimg != null)
+            {
+                gd_surface.UnregisterName(tempimg.Name);
+                gd_surface.Children.Remove(tempimg);
+            }
             int upper = Childrens.Count;
             for (int i = upper - 1; i >= 0; --i)
             {
@@ -803,6 +893,161 @@ namespace hashi
                 draw_points();
                 return;
             }
+        }
+
+        private void retract_click(object sender, MouseButtonEventArgs e)
+        {
+            Image tempimg;
+            string name;
+            string[] name_split;
+            for (int i = gd_hashi.Children.Count - 1; i >= 0; --i)
+            {
+                tempimg = gd_hashi.Children[i] as Image;
+                name = tempimg.Name;
+                name_split = name.Split('_');
+                if (name_split[0] == "shader" || name_split[0] == "vertical_pre" || name_split[0] == "horizontalpre" || name_split[0] == "nsdchoose")
+                {
+                    gd_hashi.UnregisterName(tempimg.Name);
+                    gd_hashi.Children.Remove(tempimg);
+                }
+            }
+            choosing_nsd = false;
+            pre_same = true;
+            if (map_hist.Count == 1)
+                return;
+            points_hist.RemoveAt(points_hist.Count - 1);
+            points.Clear();
+            Point tempp;
+            for (int i = 0; i < points_hist[points_hist.Count - 1].Count; ++i)
+            {
+                tempp = new Point(points_hist[points_hist.Count - 1][i]);
+                points.Add(tempp);
+            }
+            int[,] map_now, map_pre;
+            map_now = new int[rows, columns];
+            for (int i = 0; i < rows; ++i)
+            {
+                for (int j = 0; j < columns; ++j)
+                {
+                    map_now[i,j] = map_hist[map_hist.Count - 1][i,j];
+                }
+            }
+            map_hist.RemoveAt(map_hist.Count - 1);
+            map_pre = new int[rows, columns];
+
+            int id_1 = nothing, id_2 = nothing;
+            for (int i = 0; i < rows; ++i)
+            {
+                for (int j = 0; j < columns; ++j)
+                {
+                    map[i, j] = map_pre[i, j] = map_hist[map_hist.Count - 1][i, j];
+                    if (map_pre[i, j] != map_now[i, j])
+                    {
+                        if (map_now[i, j] == horizontalline[0] || map_now[i, j] == horizontalline[1])
+                        {
+                            for (int k = j; k >= 0; --k)
+                            {
+                                if (map_now[i, k] < points.Count)
+                                {
+                                    id_1 = map_now[i, k];
+                                    break;
+                                }
+                            }
+                            for (int k = j; k < columns; ++k)
+                            {
+                                if (map_now[i, k] < points.Count)
+                                {
+                                    id_2 = map_now[i, k];
+                                    break;
+                                }
+                            }
+                            tempimg = FindName("horizontal_" + id_1.ToString() + "_" + id_2.ToString() + "_" + i.ToString() + "_" + j.ToString()) as Image;
+                            if (map_pre[i, j] == horizontalline[0])
+                            {
+                                tempimg.Source = new BitmapImage(new Uri("Resources/horizontal1.png", UriKind.Relative));
+                            }
+                            else if(map_pre[i, j] == horizontalline[1])
+                            {
+                                tempimg.Source = new BitmapImage(new Uri("Resources/horizontal2.png", UriKind.Relative));
+                            }
+                            else if (map_pre[i, j] == nothing)
+                            {
+                                gd_hashi.UnregisterName(tempimg.Name);
+                                gd_hashi.Children.Remove(tempimg);
+                            }
+                        }
+                        else if (map_now[i, j] == verticalline[0] || map_now[i, j] == verticalline[1])
+                        {
+                            for (int k = i; k >= 0; --k)
+                            {
+                                if (map_now[k, j] < points.Count)
+                                {
+                                    id_1 = map_now[k, j];
+                                    break;
+                                }
+                            }
+                            for (int k = i; k < rows; ++k)
+                            {
+                                if (map_now[k, j] < points.Count)
+                                {
+                                    id_2 = map_now[k, j];
+                                    break;
+                                }
+                            }
+                            tempimg = FindName("vertical_" + id_1.ToString() + "_" + id_2.ToString() + "_" + i.ToString() + "_" + j.ToString()) as Image;
+                            if (map_pre[i, j] == horizontalline[0])
+                            {
+                                tempimg.Source = new BitmapImage(new Uri("Resources/horizontal1.png", UriKind.Relative));
+                            }
+                            else if (map_pre[i, j] == horizontalline[1])
+                            {
+                                tempimg.Source = new BitmapImage(new Uri("Resources/horizontal2.png", UriKind.Relative));
+                            }
+                            else if (map_pre[i, j] == nothing)
+                            {
+                                gd_hashi.UnregisterName(tempimg.Name);
+                                gd_hashi.Children.Remove(tempimg);
+                            }
+                        }
+                        else if (map_now[i, j] == nothing)
+                        {
+                            if (map_pre[i, j] == horizontalline[0] || map_pre[i, j] == horizontalline[1])
+                            {
+                                tempimg = new Image();
+                                tempimg.Name = "horizontal_" + id_1.ToString() + "_" + id_2.ToString() + "_" + i.ToString() + "_" + j.ToString();
+                                tempimg.VerticalAlignment = VerticalAlignment.Center;
+                                tempimg.HorizontalAlignment = HorizontalAlignment.Center;
+                                tempimg.Source = new BitmapImage(new Uri("Resources/horizontal" + (map_pre[i, j] == horizontalline[0] ? 1 : 2).ToString() + ".png", UriKind.Relative));
+                            }
+                            else
+                            {
+                                tempimg = new Image();
+                                tempimg.Name = "vertical_" + id_1.ToString() + "_" + id_2.ToString() + "_" + i.ToString() + "_" + j.ToString();
+                                tempimg.VerticalAlignment = VerticalAlignment.Center;
+                                tempimg.HorizontalAlignment = HorizontalAlignment.Center;
+                                tempimg.Source = new BitmapImage(new Uri("Resources/vertical" + (map_pre[i, j] == verticalline[0] ? 1 : 2).ToString() + ".png", UriKind.Relative));
+                            }
+                            tempimg.SetValue(Grid.RowProperty, i);
+                            tempimg.SetValue(Grid.ColumnProperty, j);
+                            gd_hashi.RegisterName(tempimg.Name, tempimg);
+                            gd_hashi.Children.Add(tempimg);
+                        }
+                    }
+                    else if (map[i, j] < points.Count)
+                    {
+                        tempimg = FindName("num" + map_pre[i, j].ToString()) as Image;
+                        if (points[map_pre[i, j]].available > 0)
+                        {
+                            tempimg.Opacity = 1;
+                        }
+                        else
+                        {
+                            tempimg.Opacity = 0.5;
+                        }
+                    }
+                }
+            }
+            passstep.Text = (Convert.ToInt32(passstep.Text)-1).ToString();
         }
     }
 }

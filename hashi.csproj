@@ -171,6 +171,16 @@
   <ItemGroup>
     <Resource Include="Resources\shader.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\win.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Maps\Easy\0.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\optiontitle\passstep.png" />
+    <Resource Include="Resources\optiontitle\passtime.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

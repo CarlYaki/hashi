@@ -31,7 +31,7 @@
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="2*"/>
             </Grid.ColumnDefinitions>
-            <Image Source="Resources/return.png" MouseEnter="image_enter" MouseLeave="image_leave" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="1"/>
+            <Image Source="Resources/return.png" MouseDown="retract_click" MouseEnter="image_enter" MouseLeave="image_leave" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="1"/>
             <Image Source="Resources/reset.png" MouseDown="reset_click" MouseEnter="image_enter" MouseLeave="image_leave" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="3"/>
         </Grid>
         <Grid Name="gd_home" Grid.Row="1" Grid.Column="1">
@@ -41,6 +41,18 @@
                 <ColumnDefinition Width="3*"/>
             </Grid.ColumnDefinitions>
             <Image Source="Resources/home.png" MouseDown="home_down" MouseEnter="image_enter" MouseLeave="image_leave" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="1"/>
+        </Grid>
+        <Grid Name="gd_options" Grid.Row="0" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="3*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="3*"/>
+            </Grid.RowDefinitions>
+            <Image Source="Resources/optiontitle/passstep.png" VerticalAlignment="Top" HorizontalAlignment="Center" Grid.Row="0"/>
+            <TextBlock Name="passstep" FontSize="50" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,110,0,0" Grid.Row="0"/>
+            <Image Source="Resources/optiontitle/passtime.png" VerticalAlignment="Top" HorizontalAlignment="Center" Grid.Row="3"/>
+            <TextBlock Name="passtime" FontSize="50" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,110,0,0" Grid.Row="3"/>
         </Grid>
     </Grid>
 </Window>
