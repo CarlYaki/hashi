@@ -88,6 +88,10 @@ namespace hashi
             pre_same = false;
             make_gd_hashi();
             timer.Start();
+            if (mode == "Easy" || mode == "Medium" || mode == "Hard")
+            {
+                modelevel.Text = mode + " Level." + l.ToString();
+            }
         }
 
         private void one_sec(object sender, EventArgs e)
@@ -860,11 +864,12 @@ namespace hashi
             timer.Start();
             points.Clear();
             Point tempp;
-            for (int i = 0; i < _points.Count; ++i)
+            for (int i = 0; i < points_hist[0].Count; ++i)
             {
-                tempp = new Point(_points[i]);
+                tempp = new Point(points_hist[0][i]);
                 points.Add(tempp);
             }
+            points_hist.RemoveRange(1, points_hist.Count - 1);
             pre_name_list.Clear();
             choosing_nsd = false;
             make_map();
@@ -1048,6 +1053,11 @@ namespace hashi
                 }
             }
             passstep.Text = (Convert.ToInt32(passstep.Text)-1).ToString();
+        }
+
+        private void AIstart_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

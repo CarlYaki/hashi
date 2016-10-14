@@ -44,15 +44,22 @@
         </Grid>
         <Grid Name="gd_options" Grid.Row="0" Grid.Column="1">
             <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
                 <RowDefinition Height="3*"/>
                 <RowDefinition Height="1*"/>
                 <RowDefinition Height="1*"/>
                 <RowDefinition Height="3*"/>
             </Grid.RowDefinitions>
-            <Image Source="Resources/optiontitle/passstep.png" VerticalAlignment="Top" HorizontalAlignment="Center" Grid.Row="0"/>
-            <TextBlock Name="passstep" FontSize="50" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,110,0,0" Grid.Row="0"/>
-            <Image Source="Resources/optiontitle/passtime.png" VerticalAlignment="Top" HorizontalAlignment="Center" Grid.Row="3"/>
-            <TextBlock Name="passtime" FontSize="50" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,110,0,0" Grid.Row="3"/>
+            <TextBlock Name="modelevel" FontSize="50" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,0" Grid.Row="0"/>
+            <Image Source="Resources/optiontitle/passstep.png" VerticalAlignment="Top" HorizontalAlignment="Center" Grid.Row="1"/>
+            <TextBlock Name="passstep" FontSize="50" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,110,0,0" Grid.Row="1"/>
+            <Image Source="Resources/optiontitle/passtime.png" VerticalAlignment="Top" HorizontalAlignment="Center" Grid.Row="4"/>
+            <TextBlock Name="passtime" FontSize="50" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,110,0,0" Grid.Row="4"/>
+            <TextBlock Text="AI ΔT" Grid.Row="2" VerticalAlignment="Center" Margin="40,0,0,0" FontSize="18"/>
+            <TextBlock Text="0.5s" Grid.Row="2" VerticalAlignment="Center" Margin="108,48,0,10" FontSize="16"/>
+            <TextBlock Text="2.0s" Grid.Row="2" VerticalAlignment="Center" Margin="299,48,0,10" FontSize="16"/>
+            <Slider Grid.Row="2" Minimum="0.5" Maximum="2.0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0, 0, 40 20" Width="200" Orientation="Horizontal" TickPlacement="BottomRight" TickFrequency="0.1"/>
+            <Button Name="AIstart" Content="AI start" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,0" Grid.Row="3" Width="100" Height="30" FontSize="20" Click="AIstart_Click"/>
         </Grid>
     </Grid>
 </Window>
