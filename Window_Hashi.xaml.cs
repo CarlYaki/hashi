@@ -1061,9 +1061,11 @@ namespace hashi
             passstep.Text = (Convert.ToInt32(passstep.Text)+1).ToString();
         }
 
+        TimeSpan delta_t;
         private void AIstart_Click(object sender, MouseButtonEventArgs e)
         {
             reset_click(FindName("reset"), e);
+
         }
     }
 }
