@@ -330,16 +330,20 @@ namespace hashi
                     int id_up, id_down;
                     for (int j = points[id_1].y + 1; j < points[id_2].y; ++j)
                     {
-                        tempimg = new Image();
-                        tempimg.Name = HorV + "_" + id_1.ToString() + "_" + id_2.ToString() + "_" + points[id_1].x.ToString() + "_" + j.ToString();
-                        tempimg.VerticalAlignment = VerticalAlignment.Center;
-                        tempimg.HorizontalAlignment = HorizontalAlignment.Center;
+                        tempimg = FindName(HorV + "_" + id_1.ToString() + "_" + id_2.ToString() + "_" + points[id_1].x.ToString() + "_" + j.ToString()) as Image;
+                        if (tempimg == null)
+                        {
+                            tempimg = new Image();
+                            tempimg.Name = HorV + "_" + id_1.ToString() + "_" + id_2.ToString() + "_" + points[id_1].x.ToString() + "_" + j.ToString();
+                            tempimg.VerticalAlignment = VerticalAlignment.Center;
+                            tempimg.HorizontalAlignment = HorizontalAlignment.Center;
+                            tempimg.SetValue(Grid.RowProperty, points[id_1].x);
+                            tempimg.SetValue(Grid.ColumnProperty, j);
+                            gd_hashi.RegisterName(tempimg.Name, tempimg);
+                            gd_hashi.Children.Add(tempimg);
+                            map[points[id_1].x, j] = horizontalline[nsd - 1];
+                        }
                         tempimg.Source = new BitmapImage(new Uri("Resources/" + HorV + nsd.ToString() + ".png", UriKind.Relative));
-                        tempimg.SetValue(Grid.RowProperty, points[id_1].x);
-                        tempimg.SetValue(Grid.ColumnProperty, j);
-                        gd_hashi.RegisterName(tempimg.Name, tempimg);
-                        gd_hashi.Children.Add(tempimg);
-                        map[points[id_1].x, j] = horizontalline[nsd-1];
 
 
                         id_up = nothing;
@@ -383,16 +387,20 @@ namespace hashi
                     int id_left, id_right;
                     for (int i = points[id_1].x + 1; i < points[id_2].x; ++i)
                     {
-                        tempimg = new Image();
-                        tempimg.Name = HorV + "_" + id_1.ToString() + "_" + id_2.ToString() + "_" + i.ToString() + "_" + points[id_1].y.ToString();
-                        tempimg.VerticalAlignment = VerticalAlignment.Center;
-                        tempimg.HorizontalAlignment = HorizontalAlignment.Center;
+                        tempimg = FindName(HorV + "_" + id_1.ToString() + "_" + id_2.ToString() + "_" + i.ToString() + "_" + points[id_1].y.ToString()) as Image;
+                        if (tempimg == null)
+                        {
+                            tempimg = new Image();
+                            tempimg.Name = HorV + "_" + id_1.ToString() + "_" + id_2.ToString() + "_" + i.ToString() + "_" + points[id_1].y.ToString();
+                            tempimg.VerticalAlignment = VerticalAlignment.Center;
+                            tempimg.HorizontalAlignment = HorizontalAlignment.Center;
+                            tempimg.SetValue(Grid.RowProperty, i);
+                            tempimg.SetValue(Grid.ColumnProperty, points[id_1].y);
+                            gd_hashi.RegisterName(tempimg.Name, tempimg);
+                            gd_hashi.Children.Add(tempimg);
+                            map[i, points[id_1].y] = verticalline[nsd - 1];
+                        }
                         tempimg.Source = new BitmapImage(new Uri("Resources/" + HorV + nsd.ToString() + ".png", UriKind.Relative));
-                        tempimg.SetValue(Grid.RowProperty, i);
-                        tempimg.SetValue(Grid.ColumnProperty, points[id_1].y);
-                        gd_hashi.RegisterName(tempimg.Name, tempimg);
-                        gd_hashi.Children.Add(tempimg);
-                        map[i, points[id_1].y] = verticalline[nsd-1];
 
                         id_left = nothing;
                         id_right = nothing;

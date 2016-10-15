@@ -141,6 +141,7 @@ namespace hashi
             renewpoint(map, points);
             bool obvious;
             int hole,dire,temp,retract_cnt;
+            int[] _hole = new int[4];
             do
             {
                 obvious = false;
@@ -150,25 +151,29 @@ namespace hashi
                     if (points[i].available == 0)
                         continue;
                     hole = 0;
+                    for (int t = 0; t < 4; ++t)
+                    {
+                        _hole[t] = 0;
+                    }
                     dire = 0;
                     if (points[i].up_flag)
                     {
-                        hole += min(2 - points[i].up_cnt, points[points[i].up_id].available);
+                        hole += (_hole[0] = min(2 - points[i].up_cnt, points[points[i].up_id].available));
                         dire++;
                     }
                     if (points[i].down_flag)
                     {
-                        hole += min(2 - points[i].down_cnt, points[points[i].down_id].available);
+                        hole += (_hole[2] = min(2 - points[i].down_cnt, points[points[i].down_id].available));
                         dire++;
                     }
                     if (points[i].left_flag)
                     {
-                        hole += min(2 - points[i].left_cnt, points[points[i].left_id].available);
+                        hole += (_hole[1] = min(2 - points[i].left_cnt, points[points[i].left_id].available));
                         dire++;
                     }
                     if (points[i].right_flag)
                     {
-                        hole += min(2 - points[i].right_cnt, points[points[i].right_id].available);
+                        hole += (_hole[3] = min(2 - points[i].right_cnt, points[points[i].right_id].available));
                         dire++;
                     }
                     if (hole < points[i].available)
@@ -627,6 +632,160 @@ namespace hashi
                                 }
                             }
                         }
+                        else
+                        {
+                            if (points[i].available == hole - 1)
+                            {
+                                if (hole - dire > 0)
+                                {
+                                    obvious = true;
+                                    if (_hole[0] == 2)
+                                    {
+                                        temp = 1;
+                                        points[i].up_cnt += temp;
+                                        points[points[i].up_id].down_cnt += temp;
+                                        points[i].available -= temp;
+                                        points[points[i].up_id].available -= temp;
+                                        path.Add("vertical_" + i.ToString() + "_" + points[i].up_id.ToString() + "_" + points[i].up_cnt);
+                                        retract_cnt++;
+                                        for (int x = points[i].x - 1; x > points[points[i].up_id].x; --x)
+                                        {
+                                            id_left = id_right = nothing;
+                                            map[x, points[i].y] = vertical[points[i].up_cnt];
+                                            for (int y = points[i].y - 1; y >= 0; --y)
+                                            {
+                                                if (map[x, y] < points.Count)
+                                                {
+                                                    id_left = map[x, y];
+                                                    break;
+                                                }
+                                            }
+                                            if (id_left == nothing)
+                                                continue;
+                                            for (int y = points[i].y + 1; y < columns; ++y)
+                                            {
+                                                if (map[x, y] < points.Count)
+                                                {
+                                                    id_right = map[x, y];
+                                                    break;
+                                                }
+                                            }
+                                            if (id_right == nothing)
+                                                continue;
+                                            points[id_left].right_flag = points[id_right].left_flag = false;
+                                        }
+                                    }
+                                    if (_hole[2] == 2)
+                                    {
+                                        temp = 1;
+                                        points[i].down_cnt += temp;
+                                        points[points[i].down_id].up_cnt += temp;
+                                        points[i].available -= temp;
+                                        points[points[i].down_id].available -= temp;
+                                        path.Add("vertical_" + i.ToString() + "_" + points[i].down_id.ToString() + "_" + points[i].down_cnt);
+                                        retract_cnt++;
+                                        for (int x = points[i].x + 1; x < points[points[i].down_id].x; ++x)
+                                        {
+                                            id_left = id_right = nothing;
+                                            map[x, points[i].y] = vertical[points[i].down_cnt];
+                                            for (int y = points[i].y - 1; y >= 0; --y)
+                                            {
+                                                if (map[x, y] < points.Count)
+                                                {
+                                                    id_left = map[x, y];
+                                                    break;
+                                                }
+                                            }
+                                            if (id_left == nothing)
+                                                continue;
+                                            for (int y = points[i].y + 1; y < columns; ++y)
+                                            {
+                                                if (map[x, y] < points.Count)
+                                                {
+                                                    id_right = map[x, y];
+                                                    break;
+                                                }
+                                            }
+                                            if (id_right == nothing)
+                                                continue;
+                                            points[id_left].right_flag = points[id_right].left_flag = false;
+                                        }
+                                    }
+                                    if (_hole[1] == 2)
+                                    {
+                                        temp = 1;
+                                        points[i].left_cnt += temp;
+                                        points[points[i].left_id].right_cnt += temp;
+                                        points[i].available -= temp;
+                                        points[points[i].left_id].available -= temp;
+                                        path.Add("horizontal_" + i.ToString() + "_" + points[i].left_id.ToString() + "_" + points[i].left_cnt);
+                                        retract_cnt++;
+                                        for (int y = points[i].y - 1; y > points[points[i].left_id].y; --y)
+                                        {
+                                            id_up = id_down = nothing;
+                                            map[points[i].x, y] = horizontal[points[i].left_cnt];
+                                            for (int x = points[i].x - 1; x >= 0; --x)
+                                            {
+                                                if (map[x, y] < points.Count)
+                                                {
+                                                    id_up = map[x, y];
+                                                    break;
+                                                }
+                                            }
+                                            if (id_up == nothing)
+                                                continue;
+                                            for (int x = points[i].x + 1; x < columns; ++x)
+                                            {
+                                                if (map[x, y] < points.Count)
+                                                {
+                                                    id_down = map[x, y];
+                                                    break;
+                                                }
+                                            }
+                                            if (id_down == nothing)
+                                                continue;
+                                            points[id_up].down_flag = points[id_down].up_flag = false;
+                                        }
+                                    }
+                                    if (_hole[3] == 2)
+                                    {
+                                        temp = 1;
+                                        points[i].right_cnt += temp;
+                                        points[points[i].right_id].left_cnt += temp;
+                                        points[i].available -= temp;
+                                        points[points[i].right_id].available -= temp;
+                                        path.Add("vertical_" + i.ToString() + "_" + points[i].right_id.ToString() + "_" + points[i].right_cnt);
+                                        retract_cnt++;
+                                        for (int y = points[i].y + 1; y < points[points[i].right_id].y; ++y)
+                                        {
+                                            id_up = id_down = nothing;
+                                            map[points[i].x, y] = horizontal[points[i].right_cnt];
+                                            for (int x = points[i].x - 1; x >= 0; --x)
+                                            {
+                                                if (map[x, y] < points.Count)
+                                                {
+                                                    id_up = map[x, y];
+                                                    break;
+                                                }
+                                            }
+                                            if (id_up == nothing)
+                                                continue;
+                                            for (int x = points[i].x + 1; x < columns; ++x)
+                                            {
+                                                if (map[x, y] < points.Count)
+                                                {
+                                                    id_down = map[x, y];
+                                                    break;
+                                                }
+                                            }
+                                            if (id_down == nothing)
+                                                continue;
+                                            points[id_up].down_flag = points[id_down].up_flag = false;
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                     renewpoint(map, points);
                 }
@@ -706,92 +865,116 @@ namespace hashi
              * 尝试minimum_choice的几个方案
              */
 
-            for (int i = min(ava, min_hole[0]) - 1; i >= 0; --i)
+            for (int i = min(ava, min_hole[0]); i >= 0; --i)
             {
                 hole -= min_hole[0];
                 ava -= i;
                 if (ava <= hole)
                 {
-                    points[minimum_choice].up_cnt += i;
-                    points[points[minimum_choice].up_id].down_cnt += i;
-                    for (int x = points[minimum_choice].x - 1; x > points[points[minimum_choice].up_id].x; --x)
+                    if (i > 0)
                     {
-                        map[x, points[minimum_choice].x] = vertical[points[minimum_choice].up_cnt];
+                        points[minimum_choice].up_cnt += i;
+                        points[points[minimum_choice].up_id].down_cnt += i;
+                        for (int x = points[minimum_choice].x - 1; x > points[points[minimum_choice].up_id].x; --x)
+                        {
+                            map[x, points[minimum_choice].y] = vertical[points[minimum_choice].up_cnt];
+                        }
+                        path.Add("vertical_" + minimum_choice.ToString() + "_" + points[minimum_choice].up_id.ToString() + "_" + points[minimum_choice].up_cnt.ToString());
                     }
-                    path.Add("vertical_" + minimum_choice.ToString() + "_" + points[minimum_choice].up_id.ToString() + "_" + points[minimum_choice].up_cnt.ToString());
-                    for (int j = min(ava, min_hole[1]) - 1; j >= 0; --j)
+                    for (int j = min(ava, min_hole[1]); j >= 0; --j)
                     {
                         hole -= min_hole[1];
                         ava -= j;
                         if (ava <= hole)
                         {
-                            points[minimum_choice].left_cnt += j;
-                            points[points[minimum_choice].left_id].right_cnt += j;
-                            for (int y = points[minimum_choice].y - 1; y > points[points[minimum_choice].left_id].y; --y)
+                            if (j > 0)
                             {
-                                map[points[minimum_choice].x, y] = horizontal[points[minimum_choice].left_cnt];
+                                points[minimum_choice].left_cnt += j;
+                                points[points[minimum_choice].left_id].right_cnt += j;
+                                for (int y = points[minimum_choice].y - 1; y > points[points[minimum_choice].left_id].y; --y)
+                                {
+                                    map[points[minimum_choice].x, y] = horizontal[points[minimum_choice].left_cnt];
+                                }
+                                path.Add("horizontal_" + minimum_choice.ToString() + "_" + points[minimum_choice].left_id.ToString() + "_" + points[minimum_choice].left_cnt.ToString());
                             }
-                            path.Add("horizontal_" + minimum_choice.ToString() + "_" + points[minimum_choice].left_id.ToString() + "_" + points[minimum_choice].left_cnt.ToString());
-                            for (int k = min(ava, min_hole[2]) - 1; k >= 0; --k)
+                            for (int k = min(ava, min_hole[2]); k >= 0; --k)
                             {
                                 hole -= min_hole[2];
                                 ava -= k;
                                 if (ava <= hole)
                                 {
-                                    points[minimum_choice].down_cnt += k;
-                                    points[points[minimum_choice].down_id].up_cnt += k;
-                                    for (int x = points[minimum_choice].x + 1; x < points[points[minimum_choice].down_id].x; ++x)
+                                    if (k > 0)
                                     {
-                                        map[x, points[minimum_choice].x] = vertical[points[minimum_choice].down_cnt];
+                                        points[minimum_choice].down_cnt += k;
+                                        points[points[minimum_choice].down_id].up_cnt += k;
+                                        for (int x = points[minimum_choice].x + 1; x < points[points[minimum_choice].down_id].x; ++x)
+                                        {
+                                            map[x, points[minimum_choice].y] = vertical[points[minimum_choice].down_cnt];
+                                        }
+                                        path.Add("vertical_" + minimum_choice.ToString() + "_" + points[minimum_choice].down_id.ToString() + "_" + points[minimum_choice].down_cnt.ToString());
                                     }
-                                    path.Add("vertical_" + minimum_choice.ToString() + "_" + points[minimum_choice].down_id.ToString() + "_" + points[minimum_choice].down_cnt.ToString());
-                                    points[minimum_choice].right_cnt += ava;
-                                    points[points[minimum_choice].right_id].left_cnt += ava;
-                                    for (int y = points[minimum_choice].y + 1; y < points[points[minimum_choice].right_id].y; ++y)
+                                    if (ava > 0)
                                     {
-                                        map[points[minimum_choice].x, y] = horizontal[points[minimum_choice].right_cnt];
+                                        points[minimum_choice].right_cnt += ava;
+                                        points[points[minimum_choice].right_id].left_cnt += ava;
+                                        for (int y = points[minimum_choice].y + 1; y < points[points[minimum_choice].right_id].y; ++y)
+                                        {
+                                            map[points[minimum_choice].x, y] = horizontal[points[minimum_choice].right_cnt];
+                                        }
+                                        path.Add("horizontal_" + minimum_choice.ToString() + "_" + points[minimum_choice].right_id.ToString() + "_" + points[minimum_choice].right_cnt.ToString());
                                     }
-                                    path.Add("horizontal_" + minimum_choice.ToString() + "_" + points[minimum_choice].right_id.ToString() + "_" + points[minimum_choice].right_cnt.ToString());
 
                                     if (dfs(map, points))
                                         return true;
 
-                                    points[minimum_choice].right_cnt -= ava;
-                                    points[points[minimum_choice].right_id].left_cnt -= ava;
-                                    for (int y = points[minimum_choice].y + 1; y < points[points[minimum_choice].right_id].y; ++y)
+                                    if (ava > 0)
                                     {
-                                        map[points[minimum_choice].x, y] = horizontal[points[minimum_choice].right_cnt];
+                                        points[minimum_choice].right_cnt -= ava;
+                                        points[points[minimum_choice].right_id].left_cnt -= ava;
+                                        for (int y = points[minimum_choice].y + 1; y < points[points[minimum_choice].right_id].y; ++y)
+                                        {
+                                            map[points[minimum_choice].x, y] = horizontal[points[minimum_choice].right_cnt];
+                                        }
+                                        path.Add("retract");
                                     }
-                                    path.Add("retract");
-                                    points[minimum_choice].down_cnt -= k;
-                                    points[points[minimum_choice].down_id].up_cnt -= k;
-                                    for (int x = points[minimum_choice].x + 1; x < points[points[minimum_choice].down_id].x; ++x)
+                                    if (k > 0)
                                     {
-                                        map[x, points[minimum_choice].x] = vertical[points[minimum_choice].down_cnt];
+                                        points[minimum_choice].down_cnt -= k;
+                                        points[points[minimum_choice].down_id].up_cnt -= k;
+                                        for (int x = points[minimum_choice].x + 1; x < points[points[minimum_choice].down_id].x; ++x)
+                                        {
+                                            map[x, points[minimum_choice].y] = vertical[points[minimum_choice].down_cnt];
+                                        }
+                                        path.Add("retract");
                                     }
-                                    path.Add("retract");
                                 }
                                 hole += min_hole[2];
                                 ava += k;
                             }
-                            points[minimum_choice].left_cnt -= j;
-                            points[points[minimum_choice].left_id].right_cnt -= j;
-                            for (int y = points[minimum_choice].y - 1; y > points[points[minimum_choice].left_id].y; --y)
+                            if (j > 0)
                             {
-                                map[points[minimum_choice].x, y] = horizontal[points[minimum_choice].left_cnt];
+                                points[minimum_choice].left_cnt -= j;
+                                points[points[minimum_choice].left_id].right_cnt -= j;
+                                for (int y = points[minimum_choice].y - 1; y > points[points[minimum_choice].left_id].y; --y)
+                                {
+                                    map[points[minimum_choice].x, y] = horizontal[points[minimum_choice].left_cnt];
+                                }
+                                path.Add("retract");
                             }
-                            path.Add("retract");
                         }
                         hole += min_hole[1];
                         ava += j;
                     }
-                    points[minimum_choice].up_cnt -= i;
-                    points[points[minimum_choice].up_id].down_cnt -= i;
-                    for (int x = points[minimum_choice].x - 1; x > points[points[minimum_choice].up_id].x; --x)
+                    if (i > 0)
                     {
-                        map[x, points[minimum_choice].x] = vertical[points[minimum_choice].up_cnt];
+                        points[minimum_choice].up_cnt -= i;
+                        points[points[minimum_choice].up_id].down_cnt -= i;
+                        for (int x = points[minimum_choice].x - 1; x > points[points[minimum_choice].up_id].x; --x)
+                        {
+                            map[x, points[minimum_choice].y] = vertical[points[minimum_choice].up_cnt];
+                        }
+                        path.Add("retract");
                     }
-                    path.Add("retract");
                 }
                 hole += min_hole[0];
                 ava += i;
