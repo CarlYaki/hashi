@@ -987,7 +987,7 @@ namespace hashi
             return false;
         }
 
-        internal static void find_solution(int[,] m, int r, int c, List<Point> p, List<string> _path)
+        internal static bool find_solution(int[,] m, int r, int c, List<Point> p, List<string> _path)
         {
             nothing = 999;
             horizontal = new int[3];
@@ -998,7 +998,7 @@ namespace hashi
             path.Clear();
             rows = r;
             columns = c;
-            dfs(m, p);
+            return dfs(m, p);
         }
 
 

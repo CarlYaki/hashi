@@ -22,8 +22,8 @@ namespace hashi
     public partial class MainWindow : Window
     {
         private int easyLevelCnt = 2;
-        private int mediumLevelCnt = 2;
-        private int hardLevelCnt = 3;
+        private int mediumLevelCnt = 1;
+        private int hardLevelCnt = 1;
         private string preMode = "";
 
         public MainWindow()

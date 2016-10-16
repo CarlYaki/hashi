@@ -95,7 +95,12 @@ namespace hashi
                 path = new List<string>();
                 path.Clear();
                 modelevel.Text = mode + " Level." + l.ToString();
-                Tools.find_solution(map,rows,columns,points,path);
+                if (!Tools.find_solution(map, rows, columns, points, path))
+                {
+                    MessageBox.Show("No Solution");
+                    (new MainWindow()).Show();
+                    this.Close();
+                }
                 path.Add("end");
                 //MessageBox.Show(path.Count.ToString());
             }

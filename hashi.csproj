@@ -73,6 +73,9 @@
     <Compile Include="Window_Hashi.xaml.cs">
       <DependentUpon>Window_Hashi.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Window_Self.xaml.cs">
+      <DependentUpon>Window_Self.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -86,6 +89,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Window_Hashi.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Window_Self.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
