@@ -66,6 +66,8 @@ namespace hashi
         DispatcherTimer timer;
         public Window_Hashi(string m, int l = 0, int r = 0, int c = 0)
         {
+            AItimer = new DispatcherTimer();
+            AItimer.Tick += AItimer_Tick;
             InitializeComponent();
             passstep.Text = "0";
             passtime.Text = "0";
@@ -94,11 +96,16 @@ namespace hashi
                 path.Clear();
                 modelevel.Text = mode + " Level." + l.ToString();
                 Tools.find_solution(map,rows,columns,points,path);
-                MessageBox.Show(path.Count.ToString());
+                path.Add("end");
+                //MessageBox.Show(path.Count.ToString());
             }
+
+            delta_t = new TimeSpan(0, 0, (int)AIdeltaT.Value, ((int)(AIdeltaT.Value * 1000)) % 1000);
+            p_path = 0;
         }
 
         List<string> path;
+        int p_path;
 
         private void one_sec(object sender, EventArgs e)
         {
@@ -330,6 +337,7 @@ namespace hashi
                     int id_up, id_down;
                     for (int j = points[id_1].y + 1; j < points[id_2].y; ++j)
                     {
+                        map[points[id_1].x, j] = horizontalline[nsd - 1];
                         tempimg = FindName(HorV + "_" + id_1.ToString() + "_" + id_2.ToString() + "_" + points[id_1].x.ToString() + "_" + j.ToString()) as Image;
                         if (tempimg == null)
                         {
@@ -387,6 +395,7 @@ namespace hashi
                     int id_left, id_right;
                     for (int i = points[id_1].x + 1; i < points[id_2].x; ++i)
                     {
+                        map[i, points[id_1].y] = verticalline[nsd - 1];
                         tempimg = FindName(HorV + "_" + id_1.ToString() + "_" + id_2.ToString() + "_" + i.ToString() + "_" + points[id_1].y.ToString()) as Image;
                         if (tempimg == null)
                         {
@@ -460,7 +469,7 @@ namespace hashi
                 tempimg = FindName("num" + points[i].id.ToString()) as Image;
                 if (points[i].available == 0)
                 {
-                    tempimg.Opacity = 0.5;
+                    tempimg.Opacity = 0.3;
                     remain--;
                 }
                 else
@@ -511,9 +520,11 @@ namespace hashi
             map_hist.Add(temp_map);
             _points = new List<Point>();
             _points.Clear();
+            Point tempp;
             for (int i = 0; i < points.Count; ++i)
             {
-                _points.Add(points[i]);
+                tempp = new Point(points[i]);
+                _points.Add(tempp);
             }
             points_hist.Add(_points);
         }
@@ -923,7 +934,7 @@ namespace hashi
             {
                 tempimg = gd_hashi.Children[i] as Image;
                 name = tempimg.Name;
-                name_split = name.Split('_');
+                 name_split = name.Split('_');
                 if (name_split[0] == "shader" || name_split[0] == "vertical_pre" || name_split[0] == "horizontalpre" || name_split[0] == "nsdchoose")
                 {
                     gd_hashi.UnregisterName(tempimg.Name);
@@ -1014,13 +1025,13 @@ namespace hashi
                                 }
                             }
                             tempimg = FindName("vertical_" + id_1.ToString() + "_" + id_2.ToString() + "_" + i.ToString() + "_" + j.ToString()) as Image;
-                            if (map_pre[i, j] == horizontalline[0])
+                            if (map_pre[i, j] == verticalline[0])
                             {
-                                tempimg.Source = new BitmapImage(new Uri("Resources/horizontal1.png", UriKind.Relative));
+                                tempimg.Source = new BitmapImage(new Uri("Resources/vertical1.png", UriKind.Relative));
                             }
-                            else if (map_pre[i, j] == horizontalline[1])
+                            else if (map_pre[i, j] == verticalline[1])
                             {
-                                tempimg.Source = new BitmapImage(new Uri("Resources/horizontal2.png", UriKind.Relative));
+                                tempimg.Source = new BitmapImage(new Uri("Resources/vertical2.png", UriKind.Relative));
                             }
                             else if (map_pre[i, j] == nothing)
                             {
@@ -1061,7 +1072,7 @@ namespace hashi
                         }
                         else
                         {
-                            tempimg.Opacity = 0.5;
+                            tempimg.Opacity = 0.3;
                         }
                     }
                 }
@@ -1069,11 +1080,109 @@ namespace hashi
             passstep.Text = (Convert.ToInt32(passstep.Text)+1).ToString();
         }
 
+        bool AIon;
         TimeSpan delta_t;
+        DispatcherTimer AItimer;
+        MouseButtonEventArgs t;
+        string temp_path;
+        string[] pathsplit;
         private void AIstart_Click(object sender, MouseButtonEventArgs e)
         {
+            if (AIon)
+            {
+                AItimer.Stop();
+                AIon = false;
+                return;
+            }
+            delta_t = new TimeSpan(0, 0, 0, (int)AIdeltaT.Value, ((int)(AIdeltaT.Value * 1000)) % 1000);
+            temp_path = null;
+            t = e;
+            p_path = 0;
             reset_click(FindName("reset"), e);
+            temp_path = path[p_path++];
+            AItimer.Interval = delta_t;
+            AItimer.Start();
+        }
 
+        private void deltaTchange(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            delta_t = new TimeSpan(0, 0, (int)AIdeltaT.Value, ((int)(AIdeltaT.Value * 1000)) % 1000);
+            AItimer.Interval = delta_t;
+            AItimer.Start();
+        }
+
+        void AItimer_Tick(object sender, EventArgs e)
+        {
+            int id_1, id_2, cnt;
+            Image tempimg;
+            if (p_path >= path.Count)
+            {
+                AItimer.Stop();
+                return;
+            }
+            pathsplit = new string[0];
+            pathsplit = temp_path.Split('_');
+            if (pathsplit[0] == "retract")
+            {
+                tempimg = FindName("retract") as Image;
+                retract_click(tempimg, t);
+                temp_path = path[p_path++];
+            }
+            else if (pathsplit[0] == "horizontal" || pathsplit[0] == "vertical")
+            {
+                id_1 = Convert.ToInt32(pathsplit[1]);
+                id_2 = Convert.ToInt32(pathsplit[2]);
+                cnt = Convert.ToInt32(pathsplit[3]);
+                tempimg = FindName("num" + id_1.ToString()) as Image;
+                num_down(tempimg, t);
+                temp_path = pathsplit[0] + "pre_" + pathsplit[1] + "_" + pathsplit[2] + "_" + pathsplit[3];
+            }
+            else if (pathsplit[0] == "horizontalpre" || pathsplit[0] == "verticalpre")
+            {
+                id_1 = Convert.ToInt32(pathsplit[1]);
+                id_2 = Convert.ToInt32(pathsplit[2]);
+                cnt = Convert.ToInt32(pathsplit[3]);
+
+                if (id_1 > id_2)
+                {
+                    id_1 ^= id_2;
+                    id_2 ^= id_1;
+                    id_1 ^= id_2;
+                }
+                if (pathsplit[0] == "verticalpre")
+                {
+                    for (int i = 1; ; ++i)
+                    {
+                        tempimg = FindName("verticalpre_" + id_1.ToString() + "_" + id_2.ToString() + "_" + (points[id_1].x + 1).ToString() + "_" + points[id_1].y.ToString() + "_" + i.ToString()) as Image;
+                        if (tempimg == null)
+                            continue;
+                        else break;
+                    }
+                }
+                else
+                {
+                    for (int i = 1; ; ++i)
+                    {
+                        tempimg = FindName("horizontalpre_" + id_1.ToString() + "_" + id_2.ToString() + "_" + points[id_1].x.ToString() + "_" + (points[id_1].y + 1).ToString() + "_" + i.ToString()) as Image;
+                        if (tempimg == null)
+                            continue;
+                        else break;
+                    }
+                }
+                pre_down(tempimg, t);
+                temp_path = "nsdchoose_" + pathsplit[3] + "_" + pathsplit[0].Replace("pre", "") + "_" + id_1.ToString() + "_" + id_2.ToString();
+            }
+            else if (pathsplit[0] == "nsdchoose")
+            {
+                tempimg = FindName(temp_path) as Image;
+                System.Threading.Thread.Sleep((int)AIdeltaT.Value * 1000);
+                nsdchoose_down(tempimg, t);
+                temp_path = path[p_path++];
+            }
+            else
+            {
+                AItimer.Stop();
+            }
         }
     }
 }

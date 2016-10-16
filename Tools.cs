@@ -231,7 +231,7 @@ namespace hashi
                             points[points[i].down_id].up_cnt += temp;
                             points[i].available -= temp;
                             points[points[i].down_id].available -= temp;
-                            path.Add("vertical_" + i.ToString() + "_" + points[i].down_id.ToString() + "_" + points[i].up_cnt);
+                            path.Add("vertical_" + i.ToString() + "_" + points[i].down_id.ToString() + "_" + points[i].down_cnt);
                             retract_cnt++;
                             for (int x = points[i].x + 1; x < points[points[i].down_id].x; ++x)
                             {
@@ -267,7 +267,7 @@ namespace hashi
                             points[points[i].left_id].right_cnt += temp;
                             points[i].available -= temp;
                             points[points[i].left_id].available -= temp;
-                            path.Add("horizontal_" + i.ToString() + "_" + points[i].left_id.ToString() + "_" + points[i].up_cnt);
+                            path.Add("horizontal_" + i.ToString() + "_" + points[i].left_id.ToString() + "_" + points[i].left_cnt);
                             retract_cnt++;
                             for (int y = points[i].y - 1; y > points[points[i].left_id].y; --y)
                             {
@@ -303,7 +303,7 @@ namespace hashi
                             points[points[i].right_id].left_cnt += temp;
                             points[i].available -= temp;
                             points[points[i].right_id].available -= temp;
-                            path.Add("horizontal_" + i.ToString() + "_" + points[i].right_id.ToString() + "_" + points[i].up_cnt);
+                            path.Add("horizontal_" + i.ToString() + "_" + points[i].right_id.ToString() + "_" + points[i].right_cnt);
                             retract_cnt++;
                             for (int y = points[i].y + 1; y < points[points[i].right_id].y; ++y)
                             {
@@ -602,7 +602,7 @@ namespace hashi
                                 points[points[i].right_id].left_cnt += temp;
                                 points[i].available -= temp;
                                 points[points[i].right_id].available -= temp;
-                                path.Add("vertical_" + i.ToString() + "_" + points[i].right_id.ToString() + "_" + points[i].right_cnt);
+                                path.Add("horizontal_" + i.ToString() + "_" + points[i].right_id.ToString() + "_" + points[i].right_cnt);
                                 retract_cnt++;
                                 for (int y = points[i].y + 1; y < points[points[i].right_id].y; ++y)
                                 {
@@ -754,7 +754,7 @@ namespace hashi
                                         points[points[i].right_id].left_cnt += temp;
                                         points[i].available -= temp;
                                         points[points[i].right_id].available -= temp;
-                                        path.Add("vertical_" + i.ToString() + "_" + points[i].right_id.ToString() + "_" + points[i].right_cnt);
+                                        path.Add("horizontal_" + i.ToString() + "_" + points[i].right_id.ToString() + "_" + points[i].right_cnt);
                                         retract_cnt++;
                                         for (int y = points[i].y + 1; y < points[points[i].right_id].y; ++y)
                                         {
