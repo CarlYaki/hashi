@@ -864,7 +864,7 @@ namespace hashi
             /*
              * 尝试minimum_choice的几个方案
              */
-
+            choosing++;
             for (int i = min(ava, min_hole[0]); i >= 0; --i)
             {
                 hole -= min_hole[0];
@@ -987,8 +987,11 @@ namespace hashi
             return false;
         }
 
+        static int choosing;
+
         internal static bool find_solution(int[,] m, int r, int c, List<Point> p, List<string> _path)
         {
+            choosing = 0;
             nothing = 999;
             horizontal = new int[3];
             vertical = new int[3];
@@ -998,7 +1001,25 @@ namespace hashi
             path.Clear();
             rows = r;
             columns = c;
-            return dfs(m, p);
+            if (dfs(m, p))
+            {
+                //MessageBox.Show(choosing.ToString());
+                if (choosing == 0)
+                    MessageBox.Show("That's very easy.");
+                else if (choosing == 1)
+                {
+                    MessageBox.Show("Kind of easy because that I hypothesized for 1 time.");
+                }
+                else if (choosing < 5)
+                    MessageBox.Show("I think it's of medium difficulty because that I hypothesized for " + choosing.ToString() + " times.");
+                else
+                    MessageBox.Show("I think it's quite hard because that I hypothesized for " + choosing.ToString() + " times.");
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
 

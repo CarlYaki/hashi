@@ -64,8 +64,10 @@ namespace hashi
         List<List<Point>> points_hist;
         bool choosing_nsd = false;
         DispatcherTimer timer;
-        public Window_Hashi(string m, int l = 0, int r = 0, int c = 0)
+        List<string> s_list;
+        public Window_Hashi(string m, int l = 0, int r = 0, int c = 0, List<string> sl = null)
         {
+            s_list = sl;
             AItimer = new DispatcherTimer();
             AItimer.Tick += AItimer_Tick;
             InitializeComponent();
@@ -81,34 +83,33 @@ namespace hashi
             mode = m;
             level = l;
             Tools.showSlowly(this, gd_surface);
-            if (mode == "Self Defining")
-            {
-                rows = r;
-                columns = c;
-            }
             pre_name_list = new List<string>();
             pre_same = false;
             make_gd_hashi();
             timer.Start();
-            if (mode == "Easy" || mode == "Medium" || mode == "Hard")
-            {
-                path = new List<string>();
-                path.Clear();
+            path = new List<string>();
+            path.Clear();
+            if (mode != "selfDefining")
                 modelevel.Text = mode + " Level." + l.ToString();
-                if (!Tools.find_solution(map, rows, columns, points, path))
-                {
-                    MessageBox.Show("No Solution");
-                    (new MainWindow()).Show();
-                    this.Close();
-                }
-                path.Add("end");
-                //MessageBox.Show(path.Count.ToString());
+            else
+                modelevel.Text = mode;
+            if (!Tools.find_solution(map, rows, columns, points, path))
+            {
+                succeed = false;
+                MessageBox.Show("No Solution");
             }
+            else
+            {
+                succeed = true;
+            }
+            path.Add("end");
+            //MessageBox.Show(path.Count.ToString());
 
             delta_t = new TimeSpan(0, 0, (int)AIdeltaT.Value, ((int)(AIdeltaT.Value * 1000)) % 1000);
             p_path = 0;
         }
 
+        public bool succeed;
         List<string> path;
         int p_path;
 
@@ -746,19 +747,15 @@ namespace hashi
                     points.Add(newpoint);
                     tr.ReadLine();
                 }
-                draw_points();
-                make_map();
-                Point tempp;
-                _points = new List<Point>();
-                for (int i = 0; i < points.Count; ++i)
-                {
-                    tempp = new Point(points[i]);
-                    _points.Add(tempp);
-                }
-                points_hist.Add(_points);
             }
-            else if (mode == "Self Defining")
+            else if (mode == "selfDefining")
             {
+                int p_txt = 0;
+                string tl = s_list[p_txt++];
+                rows = Convert.ToInt32(tl);
+                tl = s_list[p_txt++];
+                columns = Convert.ToInt32(tl);
+
                 for (int i = 0; i < rows; ++i)
                 {
                     RowDefinition rd = new RowDefinition();
@@ -771,7 +768,34 @@ namespace hashi
                     cd.Width = new GridLength((720 / columns) < (648 / rows) ? (720 / columns) : (648 / rows));
                     gd_hashi.ColumnDefinitions.Add(cd);
                 }
+                p_txt++;
+
+                tl = s_list[p_txt++];
+                pointCnt = Convert.ToInt32(tl);
+                p_txt++;
+
+                int x, y, num;
+                Point newpoint;
+                for (int i = 0; i < pointCnt; ++i)
+                {
+                    x = Convert.ToInt32(s_list[p_txt++]);
+                    y = Convert.ToInt32(s_list[p_txt++]);
+                    num = Convert.ToInt32(s_list[p_txt++]);
+                    newpoint = new Point(x, y, num, i);
+                    points.Add(newpoint);
+                    p_txt++;
+                }
             }
+            draw_points();
+            make_map();
+            Point tempp;
+            _points = new List<Point>();
+            for (int i = 0; i < points.Count; ++i)
+            {
+                tempp = new Point(points[i]);
+                _points.Add(tempp);
+            }
+            points_hist.Add(_points);
         }
         private void make_map()
         {
@@ -889,6 +913,7 @@ namespace hashi
         private void reset_click(object sender, MouseButtonEventArgs e)
         {
             timer.Stop();
+            AItimer.Stop();
             passstep.Text = "0";
             passtime.Text = "0";
             timer.Start();
@@ -918,16 +943,7 @@ namespace hashi
                 gd_hashi.UnregisterName(tempimg.Name);
                 gd_hashi.Children.Remove(tempimg);
             }
-            if (mode == "Self Defining")
-            {
-                points = new List<Point>();
-                return;
-            }
-            else if (mode == "Easy" || mode == "Medium" || mode == "Hard")
-            {
-                draw_points();
-                return;
-            }
+            draw_points();
         }
 
         private void retract_click(object sender, MouseButtonEventArgs e)

@@ -49,6 +49,7 @@ namespace hashi
             ComboBox levelSelection = FindName("levelSelection") as ComboBox;
             string s_level;
             int i_level;
+            string r_choose, c_choose;
             switch (mode)
             {
                 case "Easy":
@@ -91,6 +92,21 @@ namespace hashi
                     this.Close();
                     break;
                 case "Self Defining":
+                    ComboBox rowsSelection = FindName("rowsSelection") as ComboBox;
+                    ComboBox columnsSelection = FindName("columnsSelection") as ComboBox;
+                    r_choose = rowsSelection.SelectionBoxItem.ToString();
+                    c_choose = columnsSelection.SelectionBoxItem.ToString();
+                    if (r_choose == "")
+                    {
+                        MessageBox.Show("Please choose row number.");
+                        return;
+                    }
+                    if (c_choose == "")
+                    {
+                        MessageBox.Show("Please choose column number.");
+                    }
+                    (new Window_Self(Convert.ToInt32(r_choose), Convert.ToInt32(c_choose))).Show();
+                    this.Close();
                     break;
                 case "Random New":
                     break;

@@ -56,9 +56,9 @@
             <Image Source="Resources/optiontitle/passtime.png" VerticalAlignment="Top" HorizontalAlignment="Center" Grid.Row="4"/>
             <TextBlock Name="passtime" FontSize="50" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,110,0,0" Grid.Row="4"/>
             <TextBlock Text="AI ΔT" Grid.Row="2" VerticalAlignment="Center" Margin="40,0,0,0" FontSize="18"/>
-            <TextBlock Text="0.5s" Grid.Row="2" VerticalAlignment="Center" Margin="108,48,0,10" FontSize="16"/>
+            <TextBlock Text="0.2s" Grid.Row="2" VerticalAlignment="Center" Margin="108,48,0,10" FontSize="16"/>
             <TextBlock Text="2.0s" Grid.Row="2" VerticalAlignment="Center" Margin="299,48,0,10" FontSize="16"/>
-            <Slider Name="AIdeltaT" ValueChanged="deltaTchange" Grid.Row="2" Minimum="0.5" Maximum="2.0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0, 0, 40 20" Width="200" Orientation="Horizontal" TickPlacement="BottomRight" TickFrequency="0.1"/>
+            <Slider Name="AIdeltaT" ValueChanged="deltaTchange" Grid.Row="2" Minimum="0.2" Maximum="2.0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0, 0, 40 20" Width="200" Orientation="Horizontal" TickPlacement="BottomRight" TickFrequency="0.1"/>
             <Image Name="AIstart" Source="Resources/ok.png" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,0" Grid.Row="3" Width="40" MouseDown="AIstart_Click" MouseEnter="image_enter" MouseLeave="image_leave"/>
         </Grid>
     </Grid>

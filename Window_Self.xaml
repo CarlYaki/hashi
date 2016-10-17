@@ -1,0 +1,49 @@
+﻿<Window x:Class="hashi.Window_Self"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Window_Self"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        WindowStartupLocation="CenterScreen"
+        Width="720"
+        Height="720"
+        ResizeMode="NoResize">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="9*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <Grid Name="gd_sd" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="0">
+        </Grid>
+        <Image Source="Resources/ok.png" MouseEnter="image_enter" MouseLeave="image_leave" VerticalAlignment="Center" HorizontalAlignment="Center" MouseDown="Image_MouseDown" Grid.Row="1"/>
+        <Image Source="Resources/home.png" MouseEnter="image_enter" MouseLeave="image_leave" VerticalAlignment="Center" HorizontalAlignment="Right" MouseDown="home_down" Grid.Row="1"/>
+        <Grid Name="gd_pre" Grid.Row="0" Visibility="Collapsed">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="6*" />
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="6*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="3*" />
+                <RowDefinition Height="2*" />
+                <RowDefinition Height="2*" />
+                <RowDefinition Height="2*" />
+                <RowDefinition Height="2*" />
+                <RowDefinition Height="3*" />
+            </Grid.RowDefinitions>
+            <Image Source="Resources/shader.png" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.7" Grid.RowSpan="6" Grid.ColumnSpan="5"/>
+            <Image Grid.Row="1" Grid.Column="1" Source="Resources/num/1.png" MouseDown="choice" MouseEnter="image_enter" MouseLeave="image_leave" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
+            <Image Grid.Row="1" Grid.Column="2" Source="Resources/num/2.png" MouseDown="choice" MouseEnter="image_enter" MouseLeave="image_leave" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
+            <Image Grid.Row="1" Grid.Column="3" Source="Resources/num/3.png" MouseDown="choice" MouseEnter="image_enter" MouseLeave="image_leave" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
+            <Image Grid.Row="2" Grid.Column="1" Source="Resources/num/4.png" MouseDown="choice" MouseEnter="image_enter" MouseLeave="image_leave" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+            <Image Grid.Row="2" Grid.Column="2" Source="Resources/num/5.png" MouseDown="choice" MouseEnter="image_enter" MouseLeave="image_leave" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <Image Grid.Row="2" Grid.Column="3" Source="Resources/num/6.png" MouseDown="choice" MouseEnter="image_enter" MouseLeave="image_leave" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+            <Image Grid.Row="3" Grid.Column="1" Source="Resources/num/7.png" MouseDown="choice" MouseEnter="image_enter" MouseLeave="image_leave" HorizontalAlignment="Right" VerticalAlignment="Top"/>
+            <Image Grid.Row="3" Grid.Column="2" Source="Resources/num/8.png" MouseDown="choice" MouseEnter="image_enter" MouseLeave="image_leave" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+            <Image Grid.Row="3" Grid.Column="3" Source="Resources/num/9.png" MouseDown="choice" MouseEnter="image_enter" MouseLeave="image_leave" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            <Image Grid.Row="4" Grid.Column="2" Source="Resources/num/0.png" MouseDown="choice" MouseEnter="image_enter" MouseLeave="image_leave" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+        </Grid>
+    </Grid>
+</Window>
