@@ -21,9 +21,9 @@ namespace hashi
     /// </summary>
     public partial class MainWindow : Window
     {
-        private int easyLevelCnt = 2;
-        private int mediumLevelCnt = 1;
-        private int hardLevelCnt = 1;
+        private int easyLevelCnt = 3;
+        private int mediumLevelCnt = 5;
+        private int hardLevelCnt = 5;
         private string preMode = "";
 
         public MainWindow()
@@ -50,6 +50,7 @@ namespace hashi
             string s_level;
             int i_level;
             string r_choose, c_choose;
+            Window_Hashi window;
             switch (mode)
             {
                 case "Easy":
@@ -62,7 +63,12 @@ namespace hashi
                         return;
                     }
                     i_level = Convert.ToInt32(s_level);
-                    (new Window_Hashi(mode, i_level)).Show();
+                    window = new Window_Hashi(mode, i_level);
+                    if(!window.succeed)
+                    {
+                        return;
+                    }
+                    window.Show();
                     this.Close();
                     break;
                 case "Medium":
@@ -75,7 +81,12 @@ namespace hashi
                         return;
                     }
                     i_level = Convert.ToInt32(s_level);
-                    (new Window_Hashi(mode, i_level)).Show();
+                    window = new Window_Hashi(mode, i_level);
+                    if(!window.succeed)
+                    {
+                        return;
+                    }
+                    window.Show();
                     this.Close();
                     break;
                 case "Hard":
@@ -88,7 +99,12 @@ namespace hashi
                         return;
                     }
                     i_level = Convert.ToInt32(s_level);
-                    (new Window_Hashi(mode, i_level)).Show();
+                    window = new Window_Hashi(mode, i_level);
+                    if(!window.succeed)
+                    {
+                        return;
+                    }
+                    window.Show();
                     this.Close();
                     break;
                 case "Self Defining":

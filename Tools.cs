@@ -140,12 +140,11 @@ namespace hashi
             }
             renewpoint(map, points);
             bool obvious;
-            int hole,dire,temp,retract_cnt;
+            int hole, dire, temp, retract_cnt = 0;
             int[] _hole = new int[4];
             do
             {
                 obvious = false;
-                retract_cnt = 0;
                 for (int i = 0; i < points.Count; ++i)
                 {
                     if (points[i].available == 0)
@@ -978,11 +977,6 @@ namespace hashi
                 }
                 hole += min_hole[0];
                 ava += i;
-            }
-
-            while (retract_cnt-- > 0)
-            {
-                path.Add("retract");
             }
             return false;
         }

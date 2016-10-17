@@ -90,7 +90,58 @@ namespace hashi
             path = new List<string>();
             path.Clear();
             if (mode != "selfDefining")
+            {
                 modelevel.Text = mode + " Level." + l.ToString();
+                for (int i = 0; i < rows; ++i)
+                {
+                    for (int j = 0; j < columns; ++j)
+                    {
+                        if (map[i, j] != nothing)
+                        {
+                            if (i > 0)
+                            {
+                                if (map[i - 1, j] != nothing)
+                                {
+                                    MessageBox.Show("Map is wrong. Numbers shall not be adjacent.");
+                                    succeed = false;
+                                    this.Close();
+                                    return;
+                                }
+                            }
+                            if (j > 0)
+                            {
+                                if (map[i, j - 1] != nothing)
+                                {
+                                    MessageBox.Show("Map is wrong. Numbers shall not be adjacent.");
+                                    succeed = false;
+                                    this.Close();
+                                    return;
+                                }
+                            }
+                            if (i < rows - 1)
+                            {
+                                if (map[i + 1, j] != nothing)
+                                {
+                                    MessageBox.Show("Map is wrong. Numbers shall not be adjacent.");
+                                    succeed = false;
+                                    this.Close();
+                                    return;
+                                }
+                            }
+                            if (j < columns - 1)
+                            {
+                                if (map[i, j + 1] != nothing)
+                                {
+                                    MessageBox.Show("Map is wrong. Numbers shall not be adjacent.");
+                                    succeed = false;
+                                    this.Close();
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
             else
                 modelevel.Text = mode;
             if (!Tools.find_solution(map, rows, columns, points, path))
@@ -144,12 +195,12 @@ namespace hashi
                 {
                     tempimg = new Image();
                     tempimg.Name = "nsdchoose_" + i.ToString() + "_" + mode + "_" + name_split[1] + "_" + name_split[2];
-                    tempimg.Margin = new Thickness(i == 2 ? 80 : 0, 0, i == 0 ? 80 : 0, 0);
+                    tempimg.Margin = new Thickness(i == 2 ? 160 : 0, 0, i == 0 ? 160 : 0, 0);
                     tempimg.VerticalAlignment = VerticalAlignment.Center;
                     tempimg.HorizontalAlignment = HorizontalAlignment.Center;
                     tempimg.Source = new BitmapImage(new Uri("Resources/num/" + i.ToString() + ".png", UriKind.Relative));
-                    tempimg.Width = 40;
-                    tempimg.Height = 40;
+                    tempimg.Width = 80;
+                    tempimg.Height = 80;
                     tempimg.SetValue(Grid.RowSpanProperty, rows);
                     tempimg.SetValue(Grid.ColumnSpanProperty, columns);
                     tempimg.MouseEnter += image_enter;
@@ -167,12 +218,12 @@ namespace hashi
                     tempimg.Name = "nsdchoose_" + i.ToString() + "_" + mode + "_" + name_split[1] + "_" + name_split[2];
                     tempimg.SetValue(Grid.RowProperty, 0);
                     tempimg.SetValue(Grid.ColumnProperty, 0);
-                    tempimg.Margin = new Thickness(i == 1 ? 40 : 0, 0, i == 0 ? 40 : 0, 0);
+                    tempimg.Margin = new Thickness(i == 1 ? 80 : 0, 0, i == 0 ? 80 : 0, 0);
                     tempimg.VerticalAlignment = VerticalAlignment.Center;
                     tempimg.HorizontalAlignment = HorizontalAlignment.Center;
                     tempimg.Source = new BitmapImage(new Uri("Resources/num/" + i.ToString() + ".png", UriKind.Relative));
-                    tempimg.Width = 40;
-                    tempimg.Height = 40;
+                    tempimg.Width = 80;
+                    tempimg.Height = 80;
                     tempimg.SetValue(Grid.RowSpanProperty, rows);
                     tempimg.SetValue(Grid.ColumnSpanProperty, columns);
                     tempimg.MouseEnter += image_enter;
@@ -857,6 +908,47 @@ namespace hashi
                 }
             }
             map_hist.Add(temp_map);
+            for (int i = 0; i < rows; ++i)
+            {
+                for (int j = 0; j < columns; ++j)
+                {
+                    if (map[i, j] != nothing)
+                    {
+                        if (i > 0)
+                        {
+                            if (map[i - 1, j] != nothing)
+                            {
+                                MessageBox.Show("No solution.");
+                                return;
+                            }
+                        }
+                        if (j > 0)
+                        {
+                            if (map[i, j - 1] != nothing)
+                            {
+                                MessageBox.Show("No solution.");
+                                return;
+                            }
+                        }
+                        if (i < rows - 1)
+                        {
+                            if (map[i + 1, j] != nothing)
+                            {
+                                MessageBox.Show("No solution.");
+                                return;
+                            }
+                        }
+                        if (j < columns - 1)
+                        {
+                            if (map[i, j + 1] != nothing)
+                            {
+                                MessageBox.Show("No solution.");
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
         }
         private void draw_points()
         {
@@ -956,7 +1048,7 @@ namespace hashi
                 tempimg = gd_hashi.Children[i] as Image;
                 name = tempimg.Name;
                  name_split = name.Split('_');
-                if (name_split[0] == "shader" || name_split[0] == "vertical_pre" || name_split[0] == "horizontalpre" || name_split[0] == "nsdchoose")
+                if (name_split[0] == "shader" || name_split[0] == "verticalpre" || name_split[0] == "horizontalpre" || name_split[0] == "nsdchoose")
                 {
                     gd_hashi.UnregisterName(tempimg.Name);
                     gd_hashi.Children.Remove(tempimg);
