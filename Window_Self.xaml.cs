@@ -56,7 +56,7 @@ namespace hashi
             }
         }
 
-        void tempimg_MouseDown(object sender, MouseButtonEventArgs e)
+        void tempimg_MouseDown(object sender, MouseButtonEventArgs e)//响应数字按下
         {
             Image tempimg = (Image)sender;
             now_r = Convert.ToInt32(tempimg.Name.Split('_')[1]);
@@ -65,7 +65,7 @@ namespace hashi
         }
 
         List<string> txt;
-        private void Image_MouseDown(object sender, MouseButtonEventArgs e)
+        private void Image_MouseDown(object sender, MouseButtonEventArgs e)//响应提交按下
         {
             txt = new List<string>();
             txt.Clear();
@@ -154,7 +154,7 @@ namespace hashi
         }
 
         int now_r, now_c;
-        private void choice(object sender, MouseButtonEventArgs e)
+        private void choice(object sender, MouseButtonEventArgs e)//响应选择的数字按下
         {
             Image tempimg = (Image)sender;
             string source = tempimg.Source.ToString();

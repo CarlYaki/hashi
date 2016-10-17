@@ -20,14 +20,14 @@ namespace hashi
     /// <summary>
     /// Window_Hashi.xaml 的交互逻辑
     /// </summary>
-    class Point
+    class Point//记录每个点的数据
     {
 
-        public int x, y, id, num;
-        public int available, up_cnt, down_cnt, left_cnt, right_cnt;
-        public int directions;
-        public bool up_flag, down_flag, left_flag, right_flag;
-        public int up_id, down_id, left_id, right_id;
+        public int x, y, id, num;//行、列、编号、数值
+        public int available, up_cnt, down_cnt, left_cnt, right_cnt;//ava、向上/下/左/右桥的数量
+        public int directions;//可连的方向
+        public bool up_flag, down_flag, left_flag, right_flag;//能否向上/下/左/右连接
+        public int up_id, down_id, left_id, right_id;//上/下/左/右的点的编号
         public Point()
         { }
         public Point(int a, int b, int c, int d)
@@ -169,7 +169,7 @@ namespace hashi
             passtime.Text = (Convert.ToInt32(passtime.Text) + 1).ToString();
         }
 
-        private void pre_down(object sender, MouseButtonEventArgs e)
+        private void pre_down(object sender, MouseButtonEventArgs e)//响应可连接方向青色区域按下，显示可连接边数的选项
         {
             Image pre = sender as Image;
             string pre_name = pre.Name;
@@ -236,7 +236,7 @@ namespace hashi
             choosing_nsd = true;
         }
 
-        private void nsdchoose_down(object sender, MouseButtonEventArgs e)
+        private void nsdchoose_down(object sender, MouseButtonEventArgs e)//响应桥数量选择按下，生成桥
         {
             choosing_nsd = false;
             Image nsdchoose = sender as Image;
@@ -597,7 +597,7 @@ namespace hashi
 
         private int pre_num_id = 999;
         private bool pre_same;
-        private void num_down(object sender, MouseButtonEventArgs e)
+        private void num_down(object sender, MouseButtonEventArgs e)//响应数字（岛）被按下，显示可连接的方向
         {
             if (choosing_nsd)
                 return;
@@ -755,7 +755,7 @@ namespace hashi
         }
 
 
-        private void make_gd_hashi()
+        private void make_gd_hashi()//获得map，游戏图部分生成
         {
             Grid gd_hashi = FindName("gd_hashi") as Grid;
             gd_hashi.VerticalAlignment = VerticalAlignment.Center;
@@ -848,7 +848,7 @@ namespace hashi
             }
             points_hist.Add(_points);
         }
-        private void make_map()
+        private void make_map()//用二维数组来表示图的状态
         {
             map = new int[rows,columns];
             for (int i = 0; i < rows; ++i)
@@ -950,7 +950,7 @@ namespace hashi
                 }
             }
         }
-        private void draw_points()
+        private void draw_points()//生成每个点
         {
             Image newnum;
             for (int i = 0; i < points.Count; ++i)
@@ -1002,7 +1002,7 @@ namespace hashi
             shining.BlurRadius = 20;
             ibtn.Effect = shining;
         }
-        private void reset_click(object sender, MouseButtonEventArgs e)
+        private void reset_click(object sender, MouseButtonEventArgs e)//响应重启按下
         {
             timer.Stop();
             AItimer.Stop();
@@ -1038,7 +1038,7 @@ namespace hashi
             draw_points();
         }
 
-        private void retract_click(object sender, MouseButtonEventArgs e)
+        private void retract_click(object sender, MouseButtonEventArgs e)//响应撤回按下
         {
             Image tempimg;
             string name;
@@ -1195,11 +1195,11 @@ namespace hashi
 
         bool AIon;
         TimeSpan delta_t;
-        DispatcherTimer AItimer;
+        DispatcherTimer AItimer;//触发AI操作的计时器
         MouseButtonEventArgs t;
         string temp_path;
         string[] pathsplit;
-        private void AIstart_Click(object sender, MouseButtonEventArgs e)
+        private void AIstart_Click(object sender, MouseButtonEventArgs e)//响应AI开始按钮按下
         {
             if (AIon)
             {

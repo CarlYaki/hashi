@@ -36,7 +36,7 @@ namespace hashi
             Tools.showSlowly(this,Starting);
         }
 
-        private void hashi_start(object sender, MouseButtonEventArgs e)
+        private void hashi_start(object sender, MouseButtonEventArgs e)//点击开始按钮
         {
             ComboBox modeSelection = FindName("modeSelection") as ComboBox;
             if (modeSelection == null)
@@ -51,7 +51,7 @@ namespace hashi
             int i_level;
             string r_choose, c_choose;
             Window_Hashi window;
-            switch (mode)
+            switch (mode)//判断模式
             {
                 case "Easy":
                     if (levelSelection == null)
@@ -131,7 +131,7 @@ namespace hashi
             }
         }
 
-        private void modeSelete(object sender, EventArgs e)
+        private void modeSelete(object sender, EventArgs e)//选择模式的ComboBox 选择不同的内容生成不同的附属Textblock和ComboBox
         {
             Grid settings = FindName("gd_settings") as Grid;
             ComboBox modeSelection = sender as ComboBox;

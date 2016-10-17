@@ -33,7 +33,7 @@ namespace hashi
         private static int rows, columns, nothing;
         private static List<string> path;
 
-        private static void renewpoint(int[,] map, List<Point> p)
+        private static void renewpoint(int[,] map, List<Point> p)//更新map、points列表
         {
             for (int i = 0; i < p.Count; ++i)
             {
@@ -120,7 +120,7 @@ namespace hashi
             }
         }
 
-        private static bool dfs(int[,] m, List<Point> p)
+        private static bool dfs(int[,] m, List<Point> p)//深度优先搜索
         {
             int[,] map = new int[rows,columns];
             for (int i = 0; i < rows; ++i)
@@ -142,7 +142,7 @@ namespace hashi
             bool obvious;
             int hole, dire, temp, retract_cnt = 0;
             int[] _hole = new int[4];
-            do
+            do//循环遍历点以完成显然的边的连接
             {
                 obvious = false;
                 for (int i = 0; i < points.Count; ++i)
@@ -790,7 +790,7 @@ namespace hashi
                 }
             } while (obvious);
             int notsettled = points.Count, minimum_choice = nothing, upper = nothing;
-            for (int i = 0; i < points.Count; ++i)
+            for (int i = 0; i < points.Count; ++i)//寻找扩展状态最少的点
             {
                 hole = dire = 0;
                 if (points[i].available == 0)
@@ -922,7 +922,11 @@ namespace hashi
                                         }
                                         path.Add("horizontal_" + minimum_choice.ToString() + "_" + points[minimum_choice].right_id.ToString() + "_" + points[minimum_choice].right_cnt.ToString());
                                     }
-
+                                    /******************************************************
+                                     * 
+                                     * 深搜部分********************************************
+                                     * 
+                                     ******************************************************/
                                     if (dfs(map, points))
                                         return true;
 
